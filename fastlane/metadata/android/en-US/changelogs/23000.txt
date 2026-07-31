@@ -1,0 +1,5 @@
+What's New in v2.3.0
+Added screen adaptation for the complete Google Pixel lineup, including standard, Pro, Pro XL, A-series, and Fold cover displays.
+Integrated native Android WindowInsets for status bars, centered display cutouts, and bottom system navigation areas.
+Fixed top action buttons overlapping Pixel display cutouts and bottom navigation being obscured by gesture or three-button navigation.
+Improved landscape safe areas and header/tab-bar spacing across different display sizes.
