@@ -27,8 +27,9 @@ Builds:
     gradle:
       - release
     prebuild:
-      - cd .. && npm run build
-      - cd .. && npx cap sync android
+      - cd ..
+      - npm run build
+      - npx --no-install cap sync android
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
