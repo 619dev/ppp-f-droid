@@ -2,8 +2,8 @@ Categories:
   - Internet
   - Phone & SMS
 License: AGPL-3.0-only
-SourceCode: https://github.com/619dev/Paperphone-plus
-IssueTracker: https://github.com/619dev/Paperphone-plus/issues
+SourceCode: https://github.com/619dev/ppp-f-droid
+IssueTracker: https://github.com/619dev/ppp-f-droid/issues
 
 AutoName: PaperPhonePlus
 Summary: End-to-end encrypted messaging and calls
@@ -16,7 +16,7 @@ Description: |-
   Play Services. It can connect to a compatible self-hosted server.
 
 RepoType: git
-Repo: https://github.com/619dev/Paperphone-plus.git
+Repo: https://github.com/619dev/ppp-f-droid.git
 
 Builds:
   - versionName: 2.3.0
