@@ -24,6 +24,7 @@ Builds:
     init: cd .. && npm ci --ignore-scripts
     gradle:
       - yes
+    output: app/build/outputs/apk/release/app-release-unsigned.apk
     prebuild:
       - cd ..
       - npm run build
