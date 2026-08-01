@@ -23,7 +23,7 @@ Builds:
       - apt-get install -y -t forky npm
     init: cd .. && npm ci --ignore-scripts
     gradle:
-      - release
+      - yes
     prebuild:
       - cd ..
       - npm run build
