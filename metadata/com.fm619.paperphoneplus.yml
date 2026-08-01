@@ -9,8 +9,6 @@ AutoName: PaperPhonePlus
 
 RepoType: git
 Repo: https://github.com/619dev/ppp-f-droid.git
-Binaries: 
-  https://github.com/619dev/ppp-f-droid/releases/download/v%v/PaperPhonePlus-%v.apk
 
 Builds:
   - versionName: 2.3.0
@@ -32,7 +30,6 @@ Builds:
     scandelete:
       - node_modules
 
-AllowedAPKSigningKeys: 39c14b942f92520723292a32759f5644638e4123ece96ed8fce5177545c39952
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
