@@ -6,6 +6,7 @@ SourceCode: https://github.com/619dev/ppp-f-droid
 IssueTracker: https://github.com/619dev/ppp-f-droid/issues
 
 AutoName: PaperPhonePlus
+
 RepoType: git
 Repo: https://github.com/619dev/ppp-f-droid.git
 Binaries:
@@ -27,6 +28,8 @@ Builds:
       - cd ..
       - npm run build
       - npx --no-install cap sync android
+    scandelete:
+      - node_modules
 
 AllowedAPKSigningKeys: 39c14b942f92520723292a32759f5644638e4123ece96ed8fce5177545c39952
 
