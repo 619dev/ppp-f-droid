@@ -30,7 +30,6 @@ Builds:
     scandelete:
       - node_modules
 
-
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 CurrentVersion: 2.3.0
