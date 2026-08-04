@@ -14,9 +14,9 @@ RepoType: git
 Repo: https://github.com/619dev/ppp-f-droid.git
 
 Builds:
-  - versionName: 2.3.0
-    versionCode: 23000
-    commit: 3096f97d7b1372c9e4a60603b1e764462c964bbf
+  - versionName: 2.3.1
+    versionCode: 23001
+    commit: 5f180cfe7dcb4b184276204cba6f8ffa1c8526dd
     subdir: android/app
     sudo:
       - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
@@ -36,5 +36,5 @@ Builds:
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 2.3.0
-CurrentVersionCode: 23000
+CurrentVersion: 2.3.1
+CurrentVersionCode: 23001
