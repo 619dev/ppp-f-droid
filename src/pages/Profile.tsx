@@ -13,7 +13,7 @@ import { Camera, ChevronLeft, ChevronRight, Smartphone, Check, Copy, KeyRound, S
 import { clearOfflineCache } from '../utils/offlineCache'
 
 type SubView = null | 'password' | 'avatar' | '2fa' | 'sessions' | 'language' | 'fingerprint' | 'myqr' | 'proxy'
-const APP_VERSION = '2.3.0'
+const APP_VERSION = '2.3.1'
 
 export default function Profile() {
   const { t } = useI18n()
@@ -91,7 +91,14 @@ export default function Profile() {
     setPushLoading(false)
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Revoke the durable device session before removing local credentials.
+    // If offline, local logout still completes and the token expires server-side.
+    try {
+      const token = localStorage.getItem('token')
+      const payload = token ? JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))) : null
+      if (payload?.session_id) await del(`/api/sessions/${payload.session_id}`)
+    } catch { /* best effort */ }
     disconnectWs()
     // Preserve identity keys (ik_pub/ik_priv) across logout/login cycles.
     // Clearing them would force ensureKeysExist() to generate a new keypair,

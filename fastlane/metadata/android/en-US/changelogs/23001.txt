@@ -1,0 +1,5 @@
+What's New in v2.3.1
+Added automatic access-token renewal and durable session persistence.
+Improved WebSocket authentication, heartbeat handling, and reconnection after network interruptions.
+Added an account-isolated offline message queue with automatic retry and deduplication.
+Local accounts and caches are now cleared only after explicit server-side session revocation.
