@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.3.1-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.3.2-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,13 +38,16 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
 
-### 最近更新（v2.3.1）
+### 最近更新（v2.3.2）
 
+- 新增通话防休眠功能：私聊及群组的语音、视频通话期间保持屏幕常亮。
+- 覆盖来电、呼出、连接中和已接通状态；通话结束或失败后自动恢复系统锁屏策略。
+- 使用 Android 原生窗口唤醒标志实现，无需申请额外的后台唤醒锁权限。
 - 新增长效刷新令牌：短期访问令牌过期后自动续期，并对并发请求复用同一次刷新。
 - 改进 WebSocket 鉴权、心跳和指数退避重连，网络波动后可自动恢复会话。
 - 新增按账户隔离的消息发送队列；离线发送的消息会在重连后自动补发并去重。
 - 仅在服务器明确撤销会话时退出登录；断网、普通鉴权失败和服务器地址变化均保留本地账户与缓存。
-- 应用版本更新至 2.3.1。
+- 应用版本更新至 2.3.2。
 
 ---
 

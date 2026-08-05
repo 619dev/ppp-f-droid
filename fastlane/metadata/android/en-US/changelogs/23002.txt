@@ -1,0 +1,4 @@
+What's New in v2.3.2
+Keeps the screen awake during voice and video calls to prevent automatic locking.
+Covers incoming, outgoing, connecting, and connected states for direct and group calls.
+Restores the system screen-timeout policy when calls end or fail, with no extra wake-lock permission.

@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.3.1-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.3.2-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,13 +38,16 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 | 🔑 Two-Factor Auth | Google Authenticator-compatible TOTP with 8 recovery codes |
 | 📷 QR Code Scanning | Scan to add friends or join groups |
 
-### What's New in v2.3.1
+### What's New in v2.3.2
 
+- Added call sleep prevention: the screen stays awake during direct and group voice/video calls.
+- Covers incoming, outgoing, connecting, and connected states, then restores the system screen-timeout policy when the call ends or fails.
+- Uses Android's native window keep-screen-on flag without requesting an additional background wake-lock permission.
 - Added durable refresh tokens so expired short-lived access tokens renew automatically, with concurrent requests sharing one refresh.
 - Improved WebSocket authentication, heartbeat handling, and exponential-backoff reconnection after network interruptions.
 - Added an account-isolated outbound message queue that retries and deduplicates offline sends after reconnecting.
 - Preserved local accounts and caches through connectivity or ordinary authorization failures, signing out only after explicit server revocation.
-- Updated the app version to 2.3.1.
+- Updated the app version to 2.3.2.
 
 ---
 
