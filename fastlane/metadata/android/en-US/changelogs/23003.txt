@@ -1,0 +1,4 @@
+What's New in v2.3.3
+Keeps the screen awake while recording voice messages to prevent the recording UI from becoming unresponsive after automatic locking.
+Limits voice messages to 120 seconds and stops automatically; processed voice effects are capped at the same duration.
+Releases the recorder, timers, and microphone when leaving a chat for improved recording stability.

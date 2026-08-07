@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.3.2-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.3.3-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,7 +38,11 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
 
-### 最近更新（v2.3.2）
+### 最近更新（v2.3.3）
+
+- 发送语音消息录音期间保持屏幕唤醒，防止自动熄屏、锁屏后出现录音界面无法操作的问题。
+- 语音消息最长限制为 120 秒，到达上限后自动停止；变声后的最终音频同样不会超过 120 秒。
+- 离开聊天页面时自动释放录音器、计时器和麦克风资源，提高录音流程稳定性。
 
 - 新增通话防休眠功能：私聊及群组的语音、视频通话期间保持屏幕常亮。
 - 覆盖来电、呼出、连接中和已接通状态；通话结束或失败后自动恢复系统锁屏策略。
