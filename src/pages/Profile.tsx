@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore, ProxyConfig } from '../store'
 import { useI18n } from '../hooks/useI18n'
-import { clearKeys, getKeys } from '../crypto/keystore'
+import { clearKeys, getKeys, lockKeysInMemory } from '../crypto/keystore'
 import { clearAllSenderKeys } from '../crypto/groupCrypto'
 import { disconnectWs } from '../api/socket'
 import { get, post, put, del, uploadFile } from '../api/http'
@@ -13,7 +13,7 @@ import { Camera, ChevronLeft, ChevronRight, Smartphone, Check, Copy, KeyRound, S
 import { clearOfflineCache } from '../utils/offlineCache'
 
 type SubView = null | 'password' | 'avatar' | '2fa' | 'sessions' | 'language' | 'fingerprint' | 'myqr' | 'proxy'
-const APP_VERSION = '2.3.2'
+const APP_VERSION = '2.3.5'
 
 export default function Profile() {
   const { t } = useI18n()
@@ -105,6 +105,7 @@ export default function Profile() {
     // breaking sender key distributions for all group members.
     // Only clear sender key cache (it will be re-fetched on next login).
     clearAllSenderKeys()
+    lockKeysInMemory()
     logout()
     navigate('/login')
   }

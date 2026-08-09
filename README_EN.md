@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.3.3-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.3.5-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -24,7 +24,7 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 | Feature | Description |
 |---------|-------------|
 | 🔐 End-to-End Encryption | Stateless ECDH + XSalsa20-Poly1305, per-message ephemeral keys, forward secrecy |
-| 🗝️ Zero-Knowledge Server | Server stores only ciphertext; private keys stay on device (4-layer persistence) |
+| 🗝️ Secure Local Keys | Identity and group Sender Keys are protected by Android Keystore; chat caches use a device-bound AES-256-GCM key |
 | 📹 Video/Voice Calls | LiveKit SFU for both direct and group calls (up to 100 participants), with discussion and lecture modes |
 | 🎙️ Real-time Voice Changer | Voice messages & calls support 3 modes (0.8x / 1.0x / 1.2x) |
 | 📱 Session Persistence | Keeps users signed in through network loss, ordinary authorization failures, and server URL changes; signs out only on an explicit server revocation |
@@ -38,7 +38,15 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 | 🔑 Two-Factor Auth | Google Authenticator-compatible TOTP with 8 recovery codes |
 | 📷 QR Code Scanning | Scan to add friends or join groups |
 
-### What's New in v2.3.3
+### What's New in v2.3.5
+
+- Added encryption at rest for local chat history using a device-bound Android Keystore key and AES-256-GCM, with ciphertext stored in a dedicated IndexedDB database.
+- Moved identity private keys and group Sender Keys into secure system-backed storage that cannot be restored onto another device with an app backup.
+- Chat plaintext now remains in memory only; decrypted fields are stripped before persistence, including optimistic outgoing private messages.
+- Added one-time migration and removal of legacy plaintext keys and chat caches from localStorage, sessionStorage, and IndexedDB, plus cleanup of the former unencrypted media cache.
+- Encrypted caches are isolated per account and authenticated against tampering; invalid data is discarded without falling back to plaintext storage.
+
+#### v2.3.3
 
 - Keeps the screen awake while recording voice messages, preventing the recording UI from becoming unresponsive after automatic locking.
 - Limits voice messages to 120 seconds and stops automatically at the limit; processed voice effects are also capped at 120 seconds.
@@ -69,7 +77,7 @@ ppp-android/
 │   ├── contexts/             # React contexts
 │   ├── crypto/               # Encryption modules
 │   │   ├── ratchet.ts        # ECDH + XSalsa20-Poly1305 encryption
-│   │   ├── keystore.ts       # 4-layer private key persistence
+│   │   ├── keystore.ts       # Android Keystore-backed private key persistence
 │   │   └── groupCrypto.ts    # Group encryption (Sender Key protocol)
 │   ├── hooks/                # Custom hooks
 │   │   └── useGroupCall.ts   # LiveKit group meetings and host controls

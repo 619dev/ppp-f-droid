@@ -1,0 +1,6 @@
+Improved local data security:
+
+- Encrypts local chat history with Android Keystore and AES-256-GCM
+- Moves identity and group Sender Keys into secure system storage
+- Removes legacy plaintext keys, chat caches, and unencrypted media caches
+- Isolates encrypted caches per account and verifies data integrity

@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.3.3-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.3.5-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -24,7 +24,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 功能 | 说明 |
 |------|------|
 | 🔐 端对端加密 | 无状态 ECDH + XSalsa20-Poly1305，逐消息临时密钥，前向保密 |
-| 🗝️ 零知识服务器 | 服务器只存储密文，私钥仅在设备本地（四层持久化） |
+| 🗝️ 安全本地密钥 | 身份私钥和群聊 Sender Keys 由 Android Keystore 保护，聊天缓存使用设备专属 AES-256-GCM 密钥加密 |
 | 📹 视频/语音通话 | 私聊与群组会议统一使用 LiveKit SFU（最多 100 人），支持自由讨论与讲课模式 |
 | 🎙️ 实时变声 | 语音消息 / 通话支持 3 档变声（0.8x / 1.0x / 1.2x） |
 | 📱 会话保持 | 网络中断、普通鉴权失败或服务器地址变化时保留登录状态，仅在服务器明确撤销会话时退出 |
@@ -38,7 +38,15 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
 
-### 最近更新（v2.3.3）
+### 最近更新（v2.3.5）
+
+- 新增本地聊天记录静态加密：使用 Android Keystore 中的设备专属密钥和 AES-256-GCM 加密，密文保存至独立 IndexedDB。
+- 身份私钥及群聊 Sender Keys 迁移至系统安全存储，密钥无法随应用备份迁移到其他设备。
+- 聊天明文仅保留在运行内存中，持久化前强制移除解密字段；私聊发送中的消息也不会短暂写入明文。
+- 自动迁移并删除旧版 localStorage、sessionStorage 和 IndexedDB 中的明文密钥与聊天缓存，同时清理旧的未加密媒体缓存。
+- 加密缓存按账号隔离并进行完整性验证，检测到损坏或篡改时安全丢弃，不回退到明文存储。
+
+#### v2.3.3
 
 - 发送语音消息录音期间保持屏幕唤醒，防止自动熄屏、锁屏后出现录音界面无法操作的问题。
 - 语音消息最长限制为 120 秒，到达上限后自动停止；变声后的最终音频同样不会超过 120 秒。
@@ -69,7 +77,7 @@ ppp-android/
 │   ├── contexts/             # React Context
 │   ├── crypto/               # 加密模块
 │   │   ├── ratchet.ts        # ECDH + XSalsa20-Poly1305 加密
-│   │   ├── keystore.ts       # 四层私钥持久化
+│   │   ├── keystore.ts       # Android Keystore 私钥持久化
 │   │   └── groupCrypto.ts    # 群组加密（Sender Key 协议）
 │   ├── hooks/                # 自定义 Hooks
 │   │   └── useGroupCall.ts   # LiveKit 群组会议与主持控制
