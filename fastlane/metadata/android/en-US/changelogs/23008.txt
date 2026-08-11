@@ -1,0 +1,3 @@
+Fixed the QR scanner back button and release the camera immediately when closing.
+
+Prevent duplicate friend requests to existing friends and show their status clearly in search results.
