@@ -14,6 +14,26 @@ RepoType: git
 Repo: https://github.com/619dev/ppp-f-droid.git
 
 Builds:
+  - versionName: 2.3.9
+    versionCode: 23009
+    commit: 4ba1d030c2ad4cb3d8f256df19f12d39ecaadb0a
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+    init:
+      - cd ../..
+      - npm ci --ignore-scripts
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - npm run build
+      - npx --no-install cap sync android
+    scandelete:
+      - node_modules
+
   - versionName: 2.3.8
     versionCode: 23008
     commit: e4c02d2ef9a8112f482161ebdf346ad8823ee191
@@ -96,5 +116,5 @@ Builds:
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 2.3.8
-CurrentVersionCode: 23008
+CurrentVersion: 2.3.9
+CurrentVersionCode: 23009
