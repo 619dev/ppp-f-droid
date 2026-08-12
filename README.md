@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.3.8-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.3.9-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,7 +38,11 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
 
-### 最近更新（v2.3.8）
+### 最近更新（v2.3.9）
+
+- 当服务端确认双方已是好友时，立即刷新好友列表并显示正确提示，兼容修复后的好友请求接口。
+
+#### v2.3.8
 
 - 修复扫码启动摄像头后左上角返回按钮无法退出的问题，退出时会立即停止并释放摄像头。
 - 修复向已有好友重复发送添加请求会破坏好友关系的问题；搜索结果现在会明确标记“已是好友”。

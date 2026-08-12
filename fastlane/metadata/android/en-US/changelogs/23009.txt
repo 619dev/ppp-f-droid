@@ -1,0 +1,1 @@
+Refresh the friends list and show the correct message when the server confirms both users are already friends.
