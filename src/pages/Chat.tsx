@@ -7,7 +7,8 @@ import { useGroupCallContext } from '../contexts/GroupCallContext'
 import { get, post, put, uploadFileWithProgress, normalizeFileUrl } from '../api/http'
 import { sendWs, onWs } from '../api/socket'
 import { getKeys } from '../crypto/keystore'
-import { encryptHybrid, decryptHybrid } from '../crypto/ratchet'
+import { encryptHybrid, decryptHybrid, inspectHybridProtocol } from '../crypto/ratchet'
+import { getPresentationSettings, protectPresentationText, unprotectPresentationText } from '../crypto/presentationCrypto'
 import { getMySenderKey, getSenderKey, generateSenderKey, encryptWithSenderKey, decryptWithSenderKey, distributeSenderKey, storeSenderKey, receiveSenderKey, isSenderKeyDistributed, markSenderKeyDistributed, removeSenderKey } from '../crypto/groupCrypto'
 import { Shield } from 'lucide-react'
 import { ChevronLeft, Lock, Settings, Timer, ImageIcon, Film, Plus, Mic, Download, Paperclip, AlertTriangle, Clock, Package as PackageIcon, FileText, File as FileIcon, Image as LucideImage, Music, Video, Check, CheckCheck, Phone, VideoIcon, SendHorizonal, Smile, WifiOff, X, ZoomIn, ZoomOut } from 'lucide-react'
@@ -329,6 +330,12 @@ export default function Chat() {
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [presentationStateVersion, setPresentationStateVersion] = useState(0)
+  useEffect(() => {
+    const update = () => { setPresentationStateVersion(v => v + 1) }
+    window.addEventListener('paperphone:presentation-state-changed', update)
+    return () => window.removeEventListener('paperphone:presentation-state-changed', update)
+  }, [])
   const [sending, setSending] = useState(false)
   const [showEmojiPanel, setShowEmojiPanel] = useState(false)
   const [viewingImage, setViewingImage] = useState<string | null>(null)
@@ -597,7 +604,7 @@ export default function Chat() {
           return { ...msg, decrypted: msg.ciphertext }
         }))
       } else {
-        serverMessages = filtered.map(m => ({ ...m, decrypted: m.ciphertext }))
+        serverMessages = await Promise.all(filtered.map(async m => ({ ...m, decrypted: await unprotectPresentationText(m.ciphertext) })))
       }
 
       // Merge: use server messages as base, append any local-only messages
@@ -610,7 +617,7 @@ export default function Chat() {
     }
 
     loadMessages().catch(() => {})
-  }, [id])
+  }, [id, presentationStateVersion])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -647,10 +654,11 @@ export default function Chat() {
     if (msgType === 'text' && !content) return
     if (!id || !user || sending) return
     const reply = replyingTo
-    const wireContent = encodeMessagePayload(content, reply)
+    const displayWireContent = encodeMessagePayload(content, reply)
     const clientMsgId = crypto.randomUUID()
     setSending(true)
     try {
+      const wireContent = await protectPresentationText(displayWireContent)
       if (msgType === 'text') setInput('')
 
       // Prepare pending message metadata for ack handler (real-time display)
@@ -663,8 +671,8 @@ export default function Chat() {
         delivery_status: 'queued',
         from: user.id,
         msg_type: msgType,
-        decrypted: wireContent,
-        ciphertext: (isGroup && group?.encrypted) ? '' : wireContent,
+        decrypted: getPresentationSettings().enabled ? wireContent : displayWireContent,
+        ciphertext: (isGroup && !group?.encrypted) ? wireContent : '',
       }
       if (isGroup) {
         pendingMsg.group_id = id
@@ -694,6 +702,7 @@ export default function Chat() {
                 if (groupDetail?.members && Array.isArray(groupDetail.members)) {
                   const keys = getKeys()
                   const distributions: any[] = []
+                  const recipients = groupDetail.members.filter((m: any) => m.id !== user.id)
                   for (const m of groupDetail.members) {
                     if (m.id === user.id) continue
                     // Try friends list first for public key, then fetch from server
@@ -725,8 +734,10 @@ export default function Chat() {
                       }
                     }
                   }
-                  if (distributions.length > 0) {
+                  if (distributions.length === recipients.length) {
+                    if (distributions.length > 0) {
                     await post(`/api/groups/${id}/sender-keys`, { distributions, key_version: 1 })
+                    }
                     distributed = true
                   }
                 }
@@ -738,9 +749,7 @@ export default function Chat() {
                 storeSenderKey(id!, user.id, newKey, 1, true)
                 sk = { groupId: id!, userId: user.id, senderKey: newKey, keyVersion: 1, distributed: true }
               } else {
-                // Distribution failed — send unencrypted as fallback
-                console.warn('[Chat] Sender key distribution failed, sending unencrypted')
-                sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, group_id: id, ciphertext: wireContent })
+                throw new Error('Sender key distribution failed')
               }
             }
             if (sk && !sent) {
@@ -754,8 +763,8 @@ export default function Chat() {
               sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, group_id: id, ciphertext: encrypted.ciphertext, nonce: encrypted.nonce, sender_key_version: sk.keyVersion })
             }
           } catch (encErr) {
-            console.warn('[Chat] Group encryption failed:', encErr)
-            sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, group_id: id, ciphertext: wireContent })
+            console.error('[Chat] Group encryption failed; message blocked:', encErr)
+            throw encErr
           }
         } else {
           sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, group_id: id, ciphertext: wireContent })
@@ -765,7 +774,7 @@ export default function Chat() {
         const recipientPub = friend?.ik_pub
         const recipientKem = friend?.kem_pub
         if (!recipientPub || !keys) {
-          sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, to: id, ciphertext: wireContent })
+          throw new Error('Recipient or local encryption keys are unavailable')
         } else {
           try {
             const forRecipient = await encryptHybrid(recipientPub, recipientKem, wireContent)
@@ -782,8 +791,8 @@ export default function Chat() {
               self_ciphertext: forSelf.ciphertext, self_header: forSelf.header,
             })
           } catch (encErr) {
-            console.warn('[Chat] Encryption failed, sending unencrypted:', encErr)
-            sent = sendWs({ type: 'message', client_msg_id: clientMsgId, msg_type: msgType, to: id, ciphertext: wireContent })
+            console.error('[Chat] Private-message encryption failed; message blocked:', encErr)
+            throw encErr
           }
         }
       }
@@ -798,6 +807,9 @@ export default function Chat() {
       }
     } catch (err) {
       console.error('[Chat] sendMessage error:', err)
+      ;(window as any).__pendingMsg = null
+      if (msgType === 'text' && content) setInput(content)
+      alert(t('chat.encryption_send_failed') || 'Encryption failed. The message was not sent.')
     } finally {
       setSending(false)
     }
@@ -1173,6 +1185,7 @@ export default function Chat() {
               </div>
             </div>
           )}
+
           <div className="section-title" style={{ padding: '16px 16px 8px' }}><Timer size={14} /> {t('auto_delete.title')}</div>
           <div style={{ padding: '0 16px 8px', fontSize: 12, color: 'var(--text-muted)' }}>
             {isGroup ? t('auto_delete.group_desc') : t('auto_delete.private_desc')}
@@ -1343,6 +1356,10 @@ export default function Chat() {
           const displayText = payload.body
           const isEncFailed = !isGroup && !msg.decrypted && msg.header
           const isSticker = msg.msg_type === 'sticker'
+          const protocol = !isGroup ? inspectHybridProtocol(msg.header) : null
+          const protocolLabel = protocol
+            ? `${protocol.name}${protocol.downgraded ? ` · ${t('chat.crypto_downgraded')}` : ''}`
+            : (isGroup && msg.sender_key_version ? `Sender Key v${msg.sender_key_version}` : null)
           const replyReference = isEncFailed
             ? { ...buildReplyReference(msg, rawDisplayText), preview: t('chat.decrypt_failed') }
             : buildReplyReference(msg, rawDisplayText)
@@ -1404,6 +1421,14 @@ export default function Chat() {
                 </div>
                 <div className="msg-time">
                   {formatTime(msg.ts)}
+                  {protocolLabel && (
+                    <span
+                      title={protocolLabel}
+                      style={{ marginLeft: 5, color: protocol?.downgraded ? '#d97706' : 'var(--accent)', fontWeight: 600 }}
+                    >
+                      {protocol?.downgraded ? 'X25519 ↓' : protocol ? 'PQ v2' : `SK v${msg.sender_key_version}`}
+                    </span>
+                  )}
                   {isMe && msg.delivery_status === 'queued' && (
                     <Clock size={12} style={{ marginLeft: 3, opacity: 0.65, verticalAlign: 'middle' }} />
                   )}
