@@ -17,9 +17,10 @@ do
   fi
 done
 
-if grep -n -E \
-  'com\.google\.gms|firebase|onesignal|cdn\.onesignal\.com|fonts\.googleapis\.com|storePassword|keyPassword' \
+if grep -R -n -E \
+  'com\.google\.gms|firebase|onesignal|cdn\.onesignal\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|storePassword|keyPassword' \
   package.json package-lock.json index.html capacitor.config.ts \
+  src \
   android/build.gradle android/app/build.gradle android/app/capacitor.build.gradle \
   android/app/src/main/AndroidManifest.xml
 then
