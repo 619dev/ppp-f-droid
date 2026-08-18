@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.4.4-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.4.7-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,46 +38,26 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
 
-### 最近更新（v2.4.4）
+### 更新日志
 
-- 修复额外加密锁定状态下错误显示“设置密码”的问题；现在显示“输入解锁密码”，并同步全部 8 种语言。
-- 修复关闭额外文本外观加密时未验证密码的问题；现在必须重新输入正确密码才能关闭。
-- 文本外观隐藏协议元数据，发送中的本地缓存不再保留消息原文。
-- 额外聊天记录加密移至个人信息 > 消息隐私，并全局应用于所有聊天。
-- 加密发送改为失败即停止，不再因加密或密钥分发错误回退为明文，并显示实际加密协议。
-- 新增可选聊天记录额外密码、8 种文本外观编码，以及离开前台后的自动锁定。
-
-#### v2.3.9
-
-- 当服务端确认双方已是好友时，立即刷新好友列表并显示正确提示，兼容修复后的好友请求接口。
-
-#### v2.3.8
-
-- 修复扫码启动摄像头后左上角返回按钮无法退出的问题，退出时会立即停止并释放摄像头。
-- 修复向已有好友重复发送添加请求会破坏好友关系的问题；搜索结果现在会明确标记“已是好友”。
-
-- 新增本地聊天记录静态加密：使用 Android Keystore 中的设备专属密钥和 AES-256-GCM 加密，密文保存至独立 IndexedDB。
-- 身份私钥及群聊 Sender Keys 迁移至系统安全存储，密钥无法随应用备份迁移到其他设备。
-- 聊天明文仅保留在运行内存中，持久化前强制移除解密字段；私聊发送中的消息也不会短暂写入明文。
-- 自动迁移并删除旧版 localStorage、sessionStorage 和 IndexedDB 中的明文密钥与聊天缓存，同时清理旧的未加密媒体缓存。
-- 加密缓存按账号隔离并进行完整性验证，检测到损坏或篡改时安全丢弃，不回退到明文存储。
-
-#### v2.3.3
-
-- 发送语音消息录音期间保持屏幕唤醒，防止自动熄屏、锁屏后出现录音界面无法操作的问题。
-- 语音消息最长限制为 120 秒，到达上限后自动停止；变声后的最终音频同样不会超过 120 秒。
-- 离开聊天页面时自动释放录音器、计时器和麦克风资源，提高录音流程稳定性。
-
-- 新增通话防休眠功能：私聊及群组的语音、视频通话期间保持屏幕常亮。
-- 覆盖来电、呼出、连接中和已接通状态；通话结束或失败后自动恢复系统锁屏策略。
-- 使用 Android 原生窗口唤醒标志实现，无需申请额外的后台唤醒锁权限。
-- 新增长效刷新令牌：短期访问令牌过期后自动续期，并对并发请求复用同一次刷新。
-- 改进 WebSocket 鉴权、心跳和指数退避重连，网络波动后可自动恢复会话。
-- 新增按账户隔离的消息发送队列；离线发送的消息会在重连后自动补发并去重。
-- 仅在服务器明确撤销会话时退出登录；断网、普通鉴权失败和服务器地址变化均保留本地账户与缓存。
-- 应用版本更新至 2.3.2。
+完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
 ---
+
+## 🔐 额外加密文本外观：工作原理与安全边界
+
+这项功能是**建立在原有端到端加密（E2EE）之上的额外保险**，不是用文本外观代替 E2EE，也不会绕过或降低原有加密。私聊仍由 X25519 / ML-KEM-768 密钥协商及原有消息加密链路保护；群聊仍使用 Sender Key 协议。身份私钥和群聊 Sender Key 继续由 Android Keystore 保护。
+
+启用后，每条消息按以下顺序处理：
+
+1. 发送方先用双方或群内全员约定的额外密码处理消息正文。密码通过 PBKDF2-SHA-256（210,000 次迭代及随机盐）派生 AES-256-GCM 密钥；每条消息使用独立随机 IV，并通过认证标签校验完整性。
+2. 额外加密后的完整数据帧（版本、盐、IV 和密文）再转换成所选的 8 种文本外观之一。这不是单纯替换字符的装饰效果，外观字符实际承载的是额外加密密文。
+3. 该外观密文随后才进入项目原有加密链路：私聊使用 E2EE，群聊使用 Sender Key；服务器接收到的仍是原有 E2EE／Sender Key 密文及投递所需元数据。
+4. 接收端执行相反流程：先用原有 E2EE／Sender Key 解密消息，再还原文本外观数据，并用额外密码解密出正文。
+
+额外密码不会上传、自动同步或由服务器分发。私聊双方必须设置相同密码；群聊中希望阅读正文的所有成员也必须设置相同密码。文本外观不需要一致：每条消息都会携带自己的外观类型标记，接收端会自动识别并还原发送方选择的外观。例如一方发送“与佛论禅”、另一方发送“韩文”，只要额外密码相同，双方都能正常解密；每个人的外观设置只决定自己发出的密文样式。密码缺失、仍处于锁定状态或密码不一致时，消息依然能够正常发送、接收并完成原有 E2EE 解密，但应用只能显示文本外观密文，无法显示原文。
+
+应用不会持久保存额外密码：解锁后密码只保留在当前运行内存中，本地仅保存随机盐和用于验证密码是否正确的 AES-GCM 验证数据。用户可以立即锁定，也可在应用离开前台 5、15、30 或 60 分钟后自动锁定。此额外层用于在原有 E2EE 之外增加一个独立的共享秘密；它不能替代强密码、设备锁、系统安全存储，也不能在设备已被完全控制且密码仍驻留内存时提供绝对保护。
 
 ## 🏗️ 技术架构
 
@@ -108,7 +88,7 @@ ppp-android/
 ├── capacitor.config.ts       # Capacitor 配置
 ├── vite.config.ts            # Vite 构建配置
 ├── package.json              # 依赖管理
-└── metadata/                 # F-Droid 构建配方
+└── google-services.json      # Firebase 配置（FCM 推送）
 ```
 
 ### 技术栈
@@ -120,7 +100,7 @@ ppp-android/
 - **加密库**：libsodium-wrappers-sumo（WebAssembly，Curve25519 / XSalsa20-Poly1305）
 - **抗量子加密**：crystals-kyber-js（CRYSTALS-Kyber 后量子密钥封装）
 - **视频通话**：LiveKit SFU（私聊与群组会议）
-- **推送通知**：ntfy / 标准 Web Push（不依赖 Play 服务）
+- **推送通知**：Firebase Cloud Messaging (FCM)
 - **UI 图标**：Lucide React
 - **动画**：Lottie Web
 - **二维码**：qrcode + jsqr
@@ -181,10 +161,11 @@ npx cap run android --livereload --external
 | `webDir` | `dist` | 前端构建输出目录 |
 | `androidScheme` | `https` | WebRTC 和 crypto API 需要 HTTPS |
 
-### F-Droid 推送配置
+### Firebase 推送配置
 
-此版本不包含 Firebase、OneSignal 或 Google Play 服务依赖。服务器支持时，
-Android 通知主题通过 ntfy 注册；浏览器中仍可使用基于标准的 Web Push。
+1. 在 [Firebase Console](https://console.firebase.google.com) 创建项目并添加 Android 应用
+2. 下载 `google-services.json` 并放置在项目根目录
+3. 在后端服务器配置 FCM 凭据（参见[上游文档](https://github.com/619dev/Paperphone-plus#配置-fcmcapacitor-原生-android-app)）
 
 ---
 
@@ -205,8 +186,7 @@ npx cap sync android
 
 ### 签名配置
 
-发布产物有意保持未签名，由 F-Droid 使用自己的密钥签名。本地分发时请将
-自己的签名配置保存在源码树之外。
+项目包含发布签名密钥库 `paperphone-release.keystore`，用于 Google Play 签名分发。
 
 ---
 

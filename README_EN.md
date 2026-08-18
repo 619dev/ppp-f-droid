@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.4.4-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.4.7-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -38,46 +38,26 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 | 🔑 Two-Factor Auth | Google Authenticator-compatible TOTP with 8 recovery codes |
 | 📷 QR Code Scanning | Scan to add friends or join groups |
 
-### What's New in v2.4.4
+### Changelog
 
-- Fixed the locked extra-encryption state so it asks for the unlock password in all eight languages.
-- Disabling extra text-presentation encryption now requires the correct password again.
-- Presentation text now hides protocol metadata, and pending-message caches no longer retain plaintext.
-- Extra chat-history encryption moved to Profile > Message Privacy and now applies globally.
-- Encryption failures now stop sending instead of falling back to plaintext, with the active protocol shown in the UI.
-- Added an optional history password, eight presentation codecs, and automatic locking after the app leaves the foreground.
-
-#### v2.3.9
-
-- Refreshes the friends list and shows the correct message when the server confirms the users are already friends, matching the repaired friend-request API.
-
-#### v2.3.8
-
-- Fixed the unresponsive back button after the QR scanner starts the camera; closing now stops and releases the camera immediately.
-- Fixed duplicate friend requests to existing friends corrupting the friendship; search results now clearly show “Already friends.”
-
-- Added encryption at rest for local chat history using a device-bound Android Keystore key and AES-256-GCM, with ciphertext stored in a dedicated IndexedDB database.
-- Moved identity private keys and group Sender Keys into secure system-backed storage that cannot be restored onto another device with an app backup.
-- Chat plaintext now remains in memory only; decrypted fields are stripped before persistence, including optimistic outgoing private messages.
-- Added one-time migration and removal of legacy plaintext keys and chat caches from localStorage, sessionStorage, and IndexedDB, plus cleanup of the former unencrypted media cache.
-- Encrypted caches are isolated per account and authenticated against tampering; invalid data is discarded without falling back to plaintext storage.
-
-#### v2.3.3
-
-- Keeps the screen awake while recording voice messages, preventing the recording UI from becoming unresponsive after automatic locking.
-- Limits voice messages to 120 seconds and stops automatically at the limit; processed voice effects are also capped at 120 seconds.
-- Releases the recorder, timers, and microphone when leaving a chat to improve recording stability.
-
-- Added call sleep prevention: the screen stays awake during direct and group voice/video calls.
-- Covers incoming, outgoing, connecting, and connected states, then restores the system screen-timeout policy when the call ends or fails.
-- Uses Android's native window keep-screen-on flag without requesting an additional background wake-lock permission.
-- Added durable refresh tokens so expired short-lived access tokens renew automatically, with concurrent requests sharing one refresh.
-- Improved WebSocket authentication, heartbeat handling, and exponential-backoff reconnection after network interruptions.
-- Added an account-isolated outbound message queue that retries and deduplicates offline sends after reconnecting.
-- Preserved local accounts and caches through connectivity or ordinary authorization failures, signing out only after explicit server revocation.
-- Updated the app version to 2.3.2.
+The complete release history has moved to [changelog.md](changelog.md).
 
 ---
+
+## 🔐 Extra-encrypted text appearance: design and security boundary
+
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. Private chats remain protected by the existing X25519 / ML-KEM-768 key agreement and message-encryption path; group chats continue to use the Sender Key protocol. Identity private keys and group Sender Keys remain protected by Android Keystore.
+
+When enabled, every message is processed in this order:
+
+1. The sender first protects the message body with the extra password shared by both participants or by all group members. PBKDF2-SHA-256 (210,000 iterations and a random salt) derives an AES-256-GCM key; every message has an independent random IV and an authentication tag for integrity.
+2. The complete extra-encryption frame (version, salt, IV, and ciphertext) is then encoded with one of eight selectable text appearances. This is not merely decorative character substitution: the visible characters carry the extra encrypted ciphertext.
+3. That appearance ciphertext then enters the project's original encryption path: private-chat E2EE or group Sender Key encryption. The server still receives the original E2EE/Sender-Key ciphertext plus metadata required for delivery.
+4. The recipient reverses the order: first decrypt the original E2EE/Sender-Key layer, then decode the text-appearance frame and decrypt the body with the extra password.
+
+The extra password is never uploaded, synchronized automatically, or distributed by the server. Both people in a private chat must set the same password; every group member who needs to read the plaintext must also set that same password. Text appearances do not need to match: every message carries its own appearance identifier, so the recipient automatically detects and decodes the sender's choice. For example, one person may send Buddhist text while another sends Hangul; if the extra password matches, both decrypt normally. A user's appearance setting controls only the ciphertext appearance of messages they send. If the password is missing, locked, or different, messages are still sent and received normally and the original E2EE layer still decrypts successfully, but the app can display only the appearance ciphertext—not the original text.
+
+The app does not persist the extra password. While unlocked it exists only in the current process memory; locally, the app stores only a random salt and AES-GCM verification data used to check whether an entered password is correct. Users can lock immediately or automatically 5, 15, 30, or 60 minutes after the app leaves the foreground. This layer adds an independent shared secret beyond E2EE; it does not replace a strong password, device lock, or system secure storage, and it cannot provide absolute protection on a fully compromised device while the password remains in memory.
 
 ## 🏗️ Architecture
 
@@ -108,7 +88,7 @@ ppp-android/
 ├── capacitor.config.ts       # Capacitor configuration
 ├── vite.config.ts            # Vite build configuration
 ├── package.json              # Dependency management
-└── metadata/                 # F-Droid build recipe
+└── google-services.json      # Firebase config (FCM push)
 ```
 
 ### Tech Stack
@@ -120,7 +100,7 @@ ppp-android/
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
 - **Post-Quantum Crypto**: crystals-kyber-js (CRYSTALS-Kyber key encapsulation)
 - **Video Calls**: LiveKit SFU (direct and group calls)
-- **Push Notifications**: ntfy / standards-based Web Push (no Play Services)
+- **Push Notifications**: Firebase Cloud Messaging (FCM)
 - **UI Icons**: Lucide React
 - **Animations**: Lottie Web
 - **QR Code**: qrcode + jsqr
@@ -181,11 +161,11 @@ Core settings are in [capacitor.config.ts](capacitor.config.ts):
 | `webDir` | `dist` | Frontend build output directory |
 | `androidScheme` | `https` | Required for WebRTC and crypto APIs |
 
-### F-Droid Push Configuration
+### Firebase Push Configuration
 
-This variant does not include Firebase, OneSignal, or any Google Play Services
-dependency. When supported by the server, Android notification topics are
-registered through ntfy. Standards-based Web Push remains available in browsers.
+1. Create a project in [Firebase Console](https://console.firebase.google.com) and add an Android app
+2. Download `google-services.json` and place it in the project root
+3. Configure FCM credentials on the backend server (see [upstream docs](https://github.com/619dev/Paperphone-plus#配置-fcmcapacitor-原生-android-app))
 
 ---
 
@@ -206,9 +186,7 @@ npx cap sync android
 
 ### Signing Configuration
 
-Release artifacts are intentionally unsigned. F-Droid signs published APKs with
-its own key. For local distribution, keep your signing configuration outside the
-source tree.
+The project includes a release signing keystore `paperphone-release.keystore` for Google Play signed distribution.
 
 ---
 
