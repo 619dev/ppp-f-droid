@@ -136,7 +136,7 @@ Builds:
 
   - versionName: 2.4.7
     versionCode: 24007
-    commit: 4a6d88cf515e7311e522da1e2a6968d63037e36b
+    commit: d9d0e425296926f1886b791fed2d73b11d727bb6
     subdir: android/app
     sudo:
       - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
