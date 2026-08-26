@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.4.7-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.4.9-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -42,6 +42,8 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
+当前版本 `2.4.9` 更新了 PaperPhone 移动端设计系统，简化按钮、头像与消息气泡的视觉效果并增强系统无障碍偏好支持；登录后若文本外观额外加密已启用且仍处于锁定状态，应用会主动提示输入密码解锁。
+
 ---
 
 ## 🔐 额外加密文本外观：工作原理与安全边界
@@ -57,7 +59,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 额外密码不会上传、自动同步或由服务器分发。私聊双方必须设置相同密码；群聊中希望阅读正文的所有成员也必须设置相同密码。文本外观不需要一致：每条消息都会携带自己的外观类型标记，接收端会自动识别并还原发送方选择的外观。例如一方发送“与佛论禅”、另一方发送“韩文”，只要额外密码相同，双方都能正常解密；每个人的外观设置只决定自己发出的密文样式。密码缺失、仍处于锁定状态或密码不一致时，消息依然能够正常发送、接收并完成原有 E2EE 解密，但应用只能显示文本外观密文，无法显示原文。
 
-应用不会持久保存额外密码：解锁后密码只保留在当前运行内存中，本地仅保存随机盐和用于验证密码是否正确的 AES-GCM 验证数据。用户可以立即锁定，也可在应用离开前台 5、15、30 或 60 分钟后自动锁定。此额外层用于在原有 E2EE 之外增加一个独立的共享秘密；它不能替代强密码、设备锁、系统安全存储，也不能在设备已被完全控制且密码仍驻留内存时提供绝对保护。
+应用不会持久保存额外密码：解锁后密码只保留在当前运行内存中，本地仅保存随机盐和用于验证密码是否正确的 AES-GCM 验证数据。用户可以立即锁定，也可在应用离开前台 5、15、30 或 60 分钟后自动锁定。重新登录并恢复账户安全状态后，如果该功能已启用但仍处于锁定状态，应用会提示输入文本外观加密密码；用户也可以取消并继续仅查看外观密文。此额外层用于在原有 E2EE 之外增加一个独立的共享秘密；它不能替代强密码、设备锁、系统安全存储，也不能在设备已被完全控制且密码仍驻留内存时提供绝对保护。
 
 ## 🏗️ 技术架构
 
@@ -66,7 +68,7 @@ ppp-android/
 ├── android/                  # Capacitor Android 原生工程
 ├── src/                      # React + TypeScript 前端源码
 │   ├── App.tsx               # 路由 + 鉴权守卫
-│   ├── index.css             # 设计系统（暗色/亮色，玻璃拟态）
+│   ├── index.css             # PaperPhone 设计系统（亮色/暗色与无障碍偏好）
 │   ├── main.tsx              # React 入口
 │   ├── api/                  # HTTP 客户端 + WebSocket 客户端
 │   ├── components/           # UI 组件（TabBar、通话覆盖层、QR码等）

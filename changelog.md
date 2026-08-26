@@ -4,6 +4,22 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.4.9
+
+- Adopted the refined PaperPhone mobile design system with platform-native typography, calmer solid message surfaces, restrained gold actions, and reduced glass effects.
+- Added support for reduced motion, reduced transparency, and increased contrast preferences while retaining Android/Capacitor safe-area handling.
+- After sign-in and secure-state hydration, prompt for the text-appearance encryption password when extra encryption is enabled but locked.
+- Added localized startup unlock and incorrect-password messages in all eight supported languages; cancellation keeps ciphertext-only viewing available.
+- Updated the application, profile-page display, package metadata, and Android native version to `2.4.9` (`versionCode 24009`).
+
+- 采用新版 PaperPhone 移动端设计系统：使用平台原生字体、稳定清晰的消息表面、克制的金色主操作，并减少不必要的玻璃与高光效果。
+- 新增减少动态效果、减少透明度和增强对比度偏好支持，同时保留 Android/Capacitor 安全区域适配。
+- 登录并恢复账户安全状态后，若文本外观额外加密已启用但仍锁定，主动提示输入文本外观加密密码。
+- 为启动解锁及密码错误提示补齐全部 8 种语言；取消后仍可继续仅查看外观密文。
+- 应用版本、个人信息页面显示版本、包元数据及 Android 原生版本统一更新为 `2.4.9`（`versionCode 24009`）。
+
+---
+
 ## 2.4.7
 
 - Fixed E2EE safety-number mismatches by deriving both views from the same pair of published identity keys; text appearance and its extra password remain independent of the E2EE safety number.

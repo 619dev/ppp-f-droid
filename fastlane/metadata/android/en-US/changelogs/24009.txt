@@ -1,0 +1,1 @@
+Adopt the refined PaperPhone mobile design with simpler buttons, avatars, and message bubbles, plus reduced-motion, reduced-transparency, and increased-contrast support. When extra text-appearance encryption is enabled, the app prompts for its password after sign-in; you may cancel and continue viewing ciphertext.

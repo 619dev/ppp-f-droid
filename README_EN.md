@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.4.7-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.4.9-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -42,6 +42,8 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
+Version `2.4.9` adopts the refined PaperPhone mobile design system, simplifies buttons, avatars, and message bubbles, and improves support for system accessibility preferences. After sign-in, the app now prompts for the password when extra text-appearance encryption is enabled but remains locked.
+
 ---
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
@@ -57,7 +59,7 @@ When enabled, every message is processed in this order:
 
 The extra password is never uploaded, synchronized automatically, or distributed by the server. Both people in a private chat must set the same password; every group member who needs to read the plaintext must also set that same password. Text appearances do not need to match: every message carries its own appearance identifier, so the recipient automatically detects and decodes the sender's choice. For example, one person may send Buddhist text while another sends Hangul; if the extra password matches, both decrypt normally. A user's appearance setting controls only the ciphertext appearance of messages they send. If the password is missing, locked, or different, messages are still sent and received normally and the original E2EE layer still decrypts successfully, but the app can display only the appearance ciphertext—not the original text.
 
-The app does not persist the extra password. While unlocked it exists only in the current process memory; locally, the app stores only a random salt and AES-GCM verification data used to check whether an entered password is correct. Users can lock immediately or automatically 5, 15, 30, or 60 minutes after the app leaves the foreground. This layer adds an independent shared secret beyond E2EE; it does not replace a strong password, device lock, or system secure storage, and it cannot provide absolute protection on a fully compromised device while the password remains in memory.
+The app does not persist the extra password. While unlocked it exists only in the current process memory; locally, the app stores only a random salt and AES-GCM verification data used to check whether an entered password is correct. Users can lock immediately or automatically 5, 15, 30, or 60 minutes after the app leaves the foreground. After sign-in and secure account-state restoration, the app prompts for the text-appearance encryption password when the feature is enabled but still locked; users may cancel and continue viewing appearance ciphertext only. This layer adds an independent shared secret beyond E2EE; it does not replace a strong password, device lock, or system secure storage, and it cannot provide absolute protection on a fully compromised device while the password remains in memory.
 
 ## 🏗️ Architecture
 
@@ -66,7 +68,7 @@ ppp-android/
 ├── android/                  # Capacitor Android native project
 ├── src/                      # React + TypeScript frontend source
 │   ├── App.tsx               # Router + auth guard
-│   ├── index.css             # Design system (dark/light, glassmorphism)
+│   ├── index.css             # PaperPhone design system (light/dark and accessibility preferences)
 │   ├── main.tsx              # React entry point
 │   ├── api/                  # HTTP client + WebSocket client
 │   ├── components/           # UI components (TabBar, call overlay, QR code, etc.)
