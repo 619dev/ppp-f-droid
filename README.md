@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.4.9-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.5.1-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -33,7 +33,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 | 💬 消息功能 | 文字、图片、视频、文件、语音消息、消息引用、Emoji 面板、Telegram 贴纸包、已读状态 |
 | 🌐 朋友圈 | 发动态（文字+图片/视频）、点赞、评论、标签可见性控制 |
 | 📰 时间线 | 小红书风格公开发帖区，双列瀑布流布局，支持匿名发帖 |
-| 🔔 消息推送 | FCM + OneSignal + ntfy 多通道推送 |
+| 🔔 消息推送 | ntfy 自由软件通道，不依赖 Google Play 服务 |
 | 🌐 多语言 | 中文、英文、日语、韩语、法语、德语、俄语、西班牙语 |
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
@@ -42,7 +42,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
-当前版本 `2.4.9` 更新了 PaperPhone 移动端设计系统，简化按钮、头像与消息气泡的视觉效果并增强系统无障碍偏好支持；登录后若文本外观额外加密已启用且仍处于锁定状态，应用会主动提示输入密码解锁。
+当前版本 `2.5.1` 同步上游客户端定位，移除已停用的 Web Push/PWA 入口；F-Droid 版仅保留不依赖 Google Play 服务的 ntfy 通知方案。
 
 ---
 

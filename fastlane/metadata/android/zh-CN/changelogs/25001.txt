@@ -1,0 +1,1 @@
+同步上游 2.5.1，移除已停用的 Web Push/PWA 代码，仅保留不依赖 Google Play 服务的 F-Droid 兼容 ntfy 通知方案。

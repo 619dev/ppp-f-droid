@@ -4,6 +4,22 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.5.1
+
+- Synchronized the upstream client's native-only direction and version display.
+- Removed the retired Web Push subscription code, notification settings, iOS PWA installation guide, and Service Worker push handlers.
+- Kept the F-Droid-specific Android Keystore, encrypted offline cache, safe-area handling, and ntfy notification path.
+- Did not introduce FCM, OneSignal, Google Play Services, proprietary SDKs, or remotely loaded fonts.
+- Updated package, Android, Fastlane, and F-Droid metadata to `2.5.1` (`versionCode 25001`).
+
+- 同步上游客户端的纯原生端定位与版本显示。
+- 移除已停用的 Web Push 订阅代码、通知设置、iOS PWA 安装引导及 Service Worker 推送处理。
+- 保留 F-Droid 专用的 Android Keystore、加密离线缓存、安全区适配与 ntfy 通知方案。
+- 未引入 FCM、OneSignal、Google Play 服务、专有 SDK 或远程字体。
+- 应用包、Android、Fastlane 与 F-Droid 元数据统一更新为 `2.5.1`（`versionCode 25001`）。
+
+---
+
 ## 2.4.9
 
 - Adopted the refined PaperPhone mobile design system with platform-native typography, calmer solid message surfaces, restrained gold actions, and reduced glass effects.

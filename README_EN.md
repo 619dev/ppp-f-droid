@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.4.9-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.5.1-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -33,7 +33,7 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 | 💬 Rich Messaging | Text, images, video, files, voice messages, message replies, emoji panel, Telegram sticker packs, read receipts |
 | 🌐 Moments | Post updates (text + images/video), likes, comments, tag-based visibility |
 | 📰 Timeline | Xiaohongshu-style public feed with waterfall layout, anonymous posting |
-| 🔔 Push Notifications | FCM + OneSignal + ntfy multi-channel push |
+| 🔔 Push Notifications | Free-software ntfy channel without Google Play Services |
 | 🌐 Multi-language | Chinese, English, Japanese, Korean, French, German, Russian, Spanish |
 | 🔑 Two-Factor Auth | Google Authenticator-compatible TOTP with 8 recovery codes |
 | 📷 QR Code Scanning | Scan to add friends or join groups |
@@ -42,7 +42,7 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.4.9` adopts the refined PaperPhone mobile design system, simplifies buttons, avatars, and message bubbles, and improves support for system accessibility preferences. After sign-in, the app now prompts for the password when extra text-appearance encryption is enabled but remains locked.
+Version `2.5.1` follows the upstream native-client direction and removes the retired Web Push/PWA entry points. The F-Droid build retains only the ntfy notification path, without relying on Google Play Services.
 
 ---
 
