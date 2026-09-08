@@ -25,7 +25,7 @@ import CallKeepAwake from './components/CallKeepAwake'
 import NotificationToast from './components/NotificationToast'
 import { CallProvider } from './contexts/CallContext'
 import { GroupCallProvider } from './contexts/GroupCallContext'
-import { get, post } from './api/http'
+import { get, post, initializeLegacyFileMapping } from './api/http'
 import { isNativePlatform } from './utils/platform'
 import { useAutoDeleteCleanup } from './hooks/useAutoDeleteCleanup'
 import { useI18n } from './hooks/useI18n'
@@ -33,6 +33,11 @@ import { useI18n } from './hooks/useI18n'
 function ProtectedLayout() {
   useSocket()
   useAutoDeleteCleanup()
+  const [, setFileMappingRevision] = useState(0)
+
+  useEffect(() => {
+    initializeLegacyFileMapping().finally(() => setFileMappingRevision(v => v + 1))
+  }, [])
 
   // Auto-subscribe to push notifications when authenticated
   useEffect(() => {

@@ -157,7 +157,7 @@ export default function Timeline() {
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                       <div className="avatar" style={{ width: 16, height: 16, fontSize: 9 }}>
-                        {p.is_anonymous ? <VenetianMask size={18} /> : (p.user?.avatar ? <img src={p.user.avatar} alt="" /> : p.user?.nickname?.[0])}
+                        {p.is_anonymous ? <VenetianMask size={18} /> : (p.user?.avatar ? <img src={normalizeFileUrl(p.user.avatar)} alt="" /> : p.user?.nickname?.[0])}
                       </div>
                       <span>{p.is_anonymous ? t('timeline.anonymous') : p.user?.nickname}</span>
                     </div>
@@ -330,7 +330,7 @@ function PostDetail({ t, postId, user, onBack }: {
         <div style={{ padding: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <div className="avatar avatar-sm">
-              {p.is_anonymous ? <VenetianMask size={18} /> : (p.user?.avatar ? <img src={p.user.avatar} alt="" /> : p.user?.nickname?.[0]?.toUpperCase())}
+              {p.is_anonymous ? <VenetianMask size={18} /> : (p.user?.avatar ? <img src={normalizeFileUrl(p.user.avatar)} alt="" /> : p.user?.nickname?.[0]?.toUpperCase())}
             </div>
             <div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>
@@ -377,7 +377,7 @@ function PostDetail({ t, postId, user, onBack }: {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
               }}>
-                {l.avatar ? <img src={l.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : l.nickname?.[0]?.toUpperCase()}
+                {l.avatar ? <img src={normalizeFileUrl(l.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : l.nickname?.[0]?.toUpperCase()}
               </div>
             ))}
           </div>
@@ -479,7 +479,7 @@ function PostComposer({ t, onBack, onPublished }: {
   const videoInputRef = useRef<HTMLInputElement>(null)
 
   const uploadOneFile = async (file: File): Promise<string> => {
-    const res = await httpUploadFile(file)
+    const res = await httpUploadFile(file, 'permanent')
     return res.url
   }
 

@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(ProxyPlugin.class);
         registerPlugin(KeepAwakePlugin.class);
         registerPlugin(SecureStoragePlugin.class);
+        registerPlugin(FileExporterPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

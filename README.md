@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.5.1-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.5.2-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 [![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
@@ -42,7 +42,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
-当前版本 `2.5.1` 同步上游客户端定位，移除已停用的 Web Push/PWA 入口；F-Droid 版仅保留不依赖 Google Play 服务的 ntfy 通知方案。
+当前版本 `2.5.2` 同步上游共享前端：支持批量下载最多 20 个聊天附件，区分临时聊天文件与永久头像/动态媒体，并兼容服务器从旧 R2 地址迁移后的文件访问；F-Droid 版继续仅使用不依赖 Google Play 服务的 ntfy 通知。
 
 ---
 

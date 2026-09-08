@@ -1,0 +1,1 @@
+Adds batch download for up to 20 chat attachments, improves migrated file and avatar URL compatibility, and distinguishes temporary chat uploads from permanent profile and social media.

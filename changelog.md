@@ -4,6 +4,26 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.5.2
+
+- Synchronized the upstream 2.5.2 shared frontend while preserving the F-Droid-specific ntfy-only notification path, secure storage, keep-awake, and safe-area integrations.
+- Added private/group chat batch downloads for up to 20 image, video, voice, or file messages, including progress and partial-failure reporting.
+- Classified avatars, group avatars, Moments, and Timeline uploads as permanent while keeping chat attachments temporary for server-side retention cleanup.
+- Added compatibility mapping for file URLs migrated from legacy R2 storage.
+- Fixed migrated user and group avatars across chat lists, contacts, profiles, calls, notifications, Moments, and Timeline by normalizing every avatar URL.
+- Added an Android native batch-file exporter that writes selected attachments into a user-chosen local directory through the system document picker.
+- Updated the application, profile-page display, package metadata, and Android native version to `2.5.2` (`versionCode 25002`).
+
+- 同步上游 2.5.2 共享前端，同时保留 F-Droid 专用的纯 ntfy 通知方案、系统安全存储、保持唤醒及安全区域适配。
+- 私聊和群聊新增批量下载，最多选择 20 条图片、视频、语音或普通文件消息，并显示下载进度及部分失败结果。
+- 用户头像、群头像、朋友圈和时间线媒体标记为永久文件，聊天附件保持临时分类以供服务端按保留期清理。
+- 新增旧 R2 存储迁移后的文件 URL 兼容映射。
+- 修复聊天列表、联系人、个人资料、通话、通知、朋友圈及时间线中的迁移后用户与群组头像显示，所有头像 URL 统一进行规范化。
+- 新增 Android 原生批量文件导出，通过系统目录选择器将所选附件真正写入用户选择的本地目录。
+- 应用版本、个人信息页显示版本、包元数据及 Android 原生版本统一更新为 `2.5.2`（`versionCode 25002`）。
+
+---
+
 ## 2.5.1
 
 - Synchronized the upstream client's native-only direction and version display.
