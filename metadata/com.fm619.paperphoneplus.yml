@@ -16,7 +16,7 @@ Repo: https://github.com/619dev/ppp-f-droid.git
 Builds:
   - versionName: 2.5.2
     versionCode: 25002
-    commit: v2.5.2
+    commit: 4ef9fcbd2935307d9bce691e7d8ca58163422ca2
     subdir: android/app
     sudo:
       - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
