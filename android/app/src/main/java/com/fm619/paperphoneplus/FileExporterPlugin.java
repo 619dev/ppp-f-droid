@@ -59,9 +59,14 @@ public class FileExporterPlugin extends Plugin {
 
         Uri treeUri = data.getData();
         try {
-            getContext().getContentResolver().takePersistableUriPermission(
-                    treeUri,
-                    data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+            int permissionFlags = 0;
+            if ((data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0) {
+                permissionFlags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            }
+            if ((data.getFlags() & Intent.FLAG_GRANT_WRITE_URI_PERMISSION) != 0) {
+                permissionFlags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+            }
+            getContext().getContentResolver().takePersistableUriPermission(treeUri, permissionFlags);
         } catch (SecurityException ignored) {
             // The one-time grant is still valid for this export.
         }

@@ -2,16 +2,15 @@
 
 🌐 **其他语言 / Other Languages:** [English](README_EN.md)
 
-> 本仓库是 [PaperPhonePlus](https://github.com/619dev/Paperphone-plus) 的 **Android 原生客户端**（Capacitor 打包），基于上游前端代码构建，适用于 Google Play 及侧载分发。
+> 本仓库是 [PaperPhonePlus](https://github.com/619dev/Paperphone-plus) 的 **Android 原生客户端**（Capacitor 打包），基于上游前端代码构建，用于 F-Droid 自由软件分发。
 
 [![Upstream](https://img.shields.io/badge/上游仓库-619dev%2FPaperphone--plus-blue?logo=github)](https://github.com/619dev/Paperphone-plus)
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.5.2-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.6.0-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
-[![Google Play](https://img.shields.io/badge/Google%20Play-下载-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
 
 ---
 
@@ -23,17 +22,18 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 | 功能 | 说明 |
 |------|------|
-| 🔐 端对端加密 | 无状态 ECDH + XSalsa20-Poly1305，逐消息临时密钥，前向保密 |
+| 🔐 端对端加密 | X25519 + XSalsa20-Poly1305，逐消息临时密钥及 Ed25519 签名 |
+| ✅ 身份验证 | 基于共享文本外观密码的双向验证、身份变化提示及签名状态标记 |
 | 🗝️ 安全本地密钥 | 身份私钥和群聊 Sender Keys 由 Android Keystore 保护，聊天缓存使用设备专属 AES-256-GCM 密钥加密 |
 | 📹 视频/语音通话 | 私聊与群组会议统一使用 LiveKit SFU（最多 100 人），支持自由讨论与讲课模式 |
 | 🎙️ 实时变声 | 语音消息 / 通话支持 3 档变声（0.8x / 1.0x / 1.2x） |
 | 📱 会话保持 | 网络中断、普通鉴权失败或服务器地址变化时保留登录状态，仅在服务器明确撤销会话时退出 |
 | 📴 离线访问 | 按账户缓存联系人、群组、聊天记录、朋友圈、时间线及媒体，断网时仍可浏览已缓存内容 |
-| 👥 群聊 | 最多 2000 人群组，支持加密与未加密两种模式 |
+| 👥 群聊 | 最多 2000 人群组，新消息使用 Sender Key 加密和身份签名，保留历史密钥版本 |
 | 💬 消息功能 | 文字、图片、视频、文件、语音消息、消息引用、Emoji 面板、Telegram 贴纸包、已读状态 |
 | 🌐 朋友圈 | 发动态（文字+图片/视频）、点赞、评论、标签可见性控制 |
 | 📰 时间线 | 小红书风格公开发帖区，双列瀑布流布局，支持匿名发帖 |
-| 🔔 消息推送 | ntfy 自由软件通道，不依赖 Google Play 服务 |
+| 🔔 消息推送 | ntfy 自由软件通知，不依赖 Google Play 服务 |
 | 🌐 多语言 | 中文、英文、日语、韩语、法语、德语、俄语、西班牙语 |
 | 🔑 两步验证 | Google Authenticator 兼容 TOTP，8 个恢复码 |
 | 📷 扫码 | 扫二维码添加好友、加入群聊 |
@@ -42,13 +42,24 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
-当前版本 `2.5.2` 同步上游共享前端：支持批量下载最多 20 个聊天附件，区分临时聊天文件与永久头像/动态媒体，并兼容服务器从旧 R2 地址迁移后的文件访问；F-Droid 版继续仅使用不依赖 Google Play 服务的 ntfy 通知。
+当前版本 `2.6.0` 同步上游共享前端：新增私聊与群聊消息签名、双向身份验证及身份变化提示，保留历史群密钥以支持离线解密，并修复群历史同步与附件鉴权下载。身份信任记录继续使用 Android Keystore 保护。
+
+### 2.6.0 升级与验证
+
+服务端和所有参与聊天的客户端需要同步升级到兼容 2.6.0 签名协议的版本。旧客户端不能解析新签名消息；旧未签名历史会显示警告，已固定身份后将拒绝该联系人的未签名消息。群密钥轮换保留可用历史版本，但无法恢复升级前已丢失的密钥。
+
+```bash
+npm run test:security
+npm run test:attachments
+npm run test:i18n
+npm run build
+```
 
 ---
 
 ## 🔐 额外加密文本外观：工作原理与安全边界
 
-这项功能是**建立在原有端到端加密（E2EE）之上的额外保险**，不是用文本外观代替 E2EE，也不会绕过或降低原有加密。私聊仍由 X25519 / ML-KEM-768 密钥协商及原有消息加密链路保护；群聊仍使用 Sender Key 协议。身份私钥和群聊 Sender Key 继续由 Android Keystore 保护。
+这项功能是**建立在原有端到端加密（E2EE）之上的额外保险**，不是用文本外观代替 E2EE，也不会绕过或降低原有加密。2.6.0 私聊签名消息使用 X25519 密钥协商、XSalsa20-Poly1305 加密及 Ed25519 签名；群聊使用 Sender Key 加密及 Ed25519 签名。身份私钥和群聊 Sender Key 继续由 Android Keystore 保护。
 
 启用后，每条消息按以下顺序处理：
 
@@ -64,7 +75,7 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 ## 🏗️ 技术架构
 
 ```
-ppp-android/
+ppp-f-droid/
 ├── android/                  # Capacitor Android 原生工程
 ├── src/                      # React + TypeScript 前端源码
 │   ├── App.tsx               # 路由 + 鉴权守卫
@@ -90,7 +101,7 @@ ppp-android/
 ├── capacitor.config.ts       # Capacitor 配置
 ├── vite.config.ts            # Vite 构建配置
 ├── package.json              # 依赖管理
-└── google-services.json      # Firebase 配置（FCM 推送）
+└── scripts/                  # F-Droid source checks and unsigned build
 ```
 
 ### 技术栈
@@ -100,9 +111,9 @@ ppp-android/
 - **状态管理**：Zustand 5
 - **原生桥接**：Capacitor 8（Android）
 - **加密库**：libsodium-wrappers-sumo（WebAssembly，Curve25519 / XSalsa20-Poly1305）
-- **抗量子加密**：crystals-kyber-js（CRYSTALS-Kyber 后量子密钥封装）
+- **兼容加密依赖**：保留 crystals-kyber-js；2.6.0 签名消息路径使用 X25519，当前注册接口的 `kem_pub` 实际承载 Ed25519 签名公钥，不代表已启用抗量子密钥注册。
 - **视频通话**：LiveKit SFU（私聊与群组会议）
-- **推送通知**：Firebase Cloud Messaging (FCM)
+- **推送通知**：ntfy（自由软件，不依赖 Google Play 服务）
 - **UI 图标**：Lucide React
 - **动画**：Lottie Web
 - **二维码**：qrcode + jsqr
@@ -113,18 +124,19 @@ ppp-android/
 
 ### 前置要求
 
-- [Node.js](https://nodejs.org/) ≥ 18
+- [Node.js](https://nodejs.org/) ≥ 22
 - [Android Studio](https://developer.android.com/studio) + Android SDK
-- JDK 17+
+- JDK 21（项目 Gradle 配置使用 Temurin 21）
+- Android SDK Platform 36；当前 `minSdkVersion 24`、`targetSdkVersion 36`
 
 ### 安装与构建
 
 ```bash
 # 1. 克隆仓库
-git clone <repo-url> && cd ppp-android
+git clone https://github.com/619dev/ppp-f-droid.git && cd ppp-f-droid
 
 # 2. 安装依赖
-npm install
+npm ci
 
 # 3. 构建前端
 npm run build
@@ -163,15 +175,9 @@ npx cap run android --livereload --external
 | `webDir` | `dist` | 前端构建输出目录 |
 | `androidScheme` | `https` | WebRTC 和 crypto API 需要 HTTPS |
 
-### Firebase 推送配置
+### ntfy 通知配置
 
-1. 在 [Firebase Console](https://console.firebase.google.com) 创建项目并添加 Android 应用
-2. 下载 `google-services.json` 并放置在项目根目录
-3. 在后端服务器配置 FCM 凭据（参见[上游文档](https://github.com/619dev/Paperphone-plus#配置-fcmcapacitor-原生-android-app)）
-
----
-
-## 📦 构建发布
+F-Droid 版通过 ntfy 接收通知；请使用自由软件 ntfy 客户端及兼容服务端配置。应用登录后注册通知主题，不使用 Firebase 或 Google Play 服务。
 
 ### 构建 Release APK/AAB
 
@@ -182,13 +188,21 @@ npm run build
 # 同步到 Android 工程
 npx cap sync android
 
-# 在 Android Studio 中构建签名包
-# Build → Generate Signed Bundle / APK
+# 检查 Android 原生代码并构建测试包
+cd android
+./gradlew --no-daemon assembleDebug lintRelease
+
+# 构建未签名发布包，由 F-Droid 从源码构建并签名
+./gradlew --no-daemon assembleRelease
 ```
 
-### 签名配置
+### F-Droid 构建
 
-项目包含发布签名密钥库 `paperphone-release.keystore`，用于 Google Play 签名分发。
+版本为 `2.6.0`（`versionCode 26000`）。仅保留 ntfy 通知，不包含 FCM、Google 服务插件、OneSignal 或发布签名密钥。运行 `npm run check:fdroid` 检查源码，运行 `sh scripts/build-fdroid.sh` 构建未签名 APK。
+
+F-Droid metadata 当前版本为 `2.6.0`（`26000`），构建固定到 `v2.6.0` 对应源码。GitHub 发布页提供本机发布密钥签名的 APK 和未签名构建；F-Droid 从源码独立构建并使用自己的签名，两种渠道不能直接覆盖安装。
+
+下载：[GitHub Release v2.6.0](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.0)。F-Droid 收录进度见 [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373)。个人信息页面底部显示 `PaperPhonePlus v2.6.0`。
 
 ---
 
@@ -204,21 +218,11 @@ npx cap sync android
 
 ## 🔒 安全模型
 
-```
-注册时:
-  设备本地生成 IK（身份密钥）+ SPK（签名预密钥）+ 20x OPK（一次性预密钥）
-  公钥上传服务器，私钥四层持久化，永不离开设备
-
-发送消息时:
-  发送方下载接收方 IK 公钥
-  生成临时 ECDH 密钥对（每条消息独立）
-  X25519 ECDH → 共享秘密 → XSalsa20-Poly1305 加密
-  临时公钥附在消息 header 中，接收方解密后销毁
-
-服务器所见:
-  ✅ 密文 blob + 路由元数据（发件人/收件人 UUID）
-  ❌ 明文 / 私钥 / 临时密钥 / 通话内容
-```
+- 身份私钥、群组 Sender Key 和身份信任记录由 Android Keystore 支持的原生安全存储保护；聊天缓存按账户加密，解密正文仅保留在运行内存中。
+- 私聊使用逐消息临时 X25519 密钥和 XSalsa20-Poly1305 加密，Ed25519 签名绑定发件人、收件人、消息类型及密文；群聊签名还绑定群组、密钥版本及消息上下文。
+- 双向身份验证通过共享文本外观密码保护的挑战和回执完成；签名本身不能证明陌生公钥的真实归属。身份变化后需要重新验证，群发消息要求成员身份已验证。
+- 服务器可见密文、公开身份/签名密钥及投递元数据。消息签名不会对上传文件本身实施端到端加密。
+- 详细协议、安全边界和人工验收步骤见 [tests/README.md](tests/README.md)。
 
 ---
 

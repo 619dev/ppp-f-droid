@@ -4,6 +4,32 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.6.0 (F-Droid)
+
+- GitHub release includes a release-signed APK, an unsigned APK and SHA-256 checksums. F-Droid metadata targets 26000 and MR !44373 pins the release source. The profile footer displays 2.6.0.
+- GitHub 发布包含签名 APK、未签名 APK 及 SHA-256 校验值；F-Droid metadata 更新至 26000，MR !44373 固定发布源码，个人信息页面底部同步显示 2.6.0。
+
+- Synced upstream `bc1d6e0` shared frontend: signed private/group messages, mutual identity verification, identity-change detection, and localized security status in eight languages.
+- Retained historical sender-key epochs, authenticated key distribution, group rotation, and complete offline/history synchronization.
+- Added authenticated attachment downloads and recursive avatar URL normalization.
+- Preserved Android ntfy (no FCM), native file export, keep-awake, safe areas, Keystore secrets, and encrypted message cache. Identity trust records use native secure storage; cached signature status is discarded and reverified.
+- Await encrypted cache persistence before advancing sync cursors; added asynchronous persistence regression coverage.
+- Fixed native directory permission flag handling and declared camera hardware optional for Google Play device compatibility.
+- Updated application/package/native versions and the profile footer to `2.6.0` (`versionCode 26000`); refreshed Chinese/English documentation and test/build guidance.
+
+- 同步上游 `bc1d6e0` 共享前端：私聊/群聊消息签名、双向身份验证、身份变化检测及八语言安全提示。
+- 保留历史群密钥版本，支持签名密钥分发、群密钥轮换及完整离线/历史消息同步。
+- 新增携带鉴权的附件下载，并统一规范化嵌套头像 URL。
+- 保留 Android ntfy 推送（无 FCM）、原生文件导出、保持唤醒、安全区域、Keystore 与加密消息缓存；身份信任记录存入系统安全存储，缓存签名状态重新校验。
+- 同步游标等待加密缓存持久化完成，补充异步写入回归验证。
+- 修复原生目录授权标志的 lint 检查问题，并将相机硬件声明为可选以支持无相机设备。
+- 应用、包元数据、Android 原生版本及个人信息页面底部统一为 `2.6.0`（`versionCode 26000`），同步更新中英文说明与测试/构建指引。
+
+- Retained the F-Droid dependency lock and unsigned build configuration; no proprietary push SDK or signing secrets imported.
+- 保留 F-Droid 依赖锁定及无签名构建配置，未引入专有推送 SDK 或签名凭据。
+
+---
+
 ## 2.5.2
 
 - Synchronized the upstream 2.5.2 shared frontend while preserving the F-Droid-specific ntfy-only notification path, secure storage, keep-awake, and safe-area integrations.

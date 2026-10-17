@@ -18,11 +18,13 @@ do
 done
 
 if grep -R -n -E \
-  'com\.google\.gms|firebase|onesignal|cdn\.onesignal\.com|fonts\.googleapis\.com|fonts\.gstatic\.com|storePassword|keyPassword' \
+  'com\.google\.gms|com\.google\.firebase|firebase|onesignal|@capacitor/push-notifications|capacitor-push-notifications|fonts\.googleapis\.com|fonts\.gstatic\.com|storePassword|keyPassword' \
   package.json package-lock.json index.html capacitor.config.ts \
   src \
-  android/build.gradle android/app/build.gradle android/app/capacitor.build.gradle \
-  android/app/src/main/AndroidManifest.xml
+  public \
+  android/build.gradle android/settings.gradle android/capacitor.settings.gradle \
+  android/app/build.gradle android/app/capacitor.build.gradle \
+  android/app/src/main/AndroidManifest.xml android/app/src/main/java
 then
   echo "F-Droid check failed: proprietary service or signing secret reference found" >&2
   exit 1

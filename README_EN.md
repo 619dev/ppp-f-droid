@@ -2,16 +2,15 @@
 
 🌐 **其他语言 / Other Languages:** [中文](README.md)
 
-> This repository is the **Android native client** (Capacitor-wrapped) of [PaperPhonePlus](https://github.com/619dev/Paperphone-plus), built from the upstream frontend codebase for Google Play and sideload distribution.
+> This repository is the **Android native client** (Capacitor-wrapped) of [PaperPhonePlus](https://github.com/619dev/Paperphone-plus), built from the upstream frontend codebase for F-Droid distribution.
 
 [![Upstream](https://img.shields.io/badge/Upstream-619dev%2FPaperphone--plus-blue?logo=github)](https://github.com/619dev/Paperphone-plus)
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.5.2-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.6.0-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
-[![Google Play](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play)](https://play.google.com/store/apps/details?id=com.fm619.paperphoneplus)
 
 ---
 
@@ -23,17 +22,18 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 | Feature | Description |
 |---------|-------------|
-| 🔐 End-to-End Encryption | Stateless ECDH + XSalsa20-Poly1305, per-message ephemeral keys, forward secrecy |
+| 🔐 End-to-End Encryption | X25519 + XSalsa20-Poly1305, per-message ephemeral keys and Ed25519 signatures |
+| ✅ Identity Verification | Mutual verification using a shared text-appearance password, identity-change warnings and signature status |
 | 🗝️ Secure Local Keys | Identity and group Sender Keys are protected by Android Keystore; chat caches use a device-bound AES-256-GCM key |
 | 📹 Video/Voice Calls | LiveKit SFU for both direct and group calls (up to 100 participants), with discussion and lecture modes |
 | 🎙️ Real-time Voice Changer | Voice messages & calls support 3 modes (0.8x / 1.0x / 1.2x) |
 | 📱 Session Persistence | Keeps users signed in through network loss, ordinary authorization failures, and server URL changes; signs out only on an explicit server revocation |
 | 📴 Offline Access | Account-isolated caching for contacts, groups, chats, Moments, Timeline, and media keeps previously loaded content available offline |
-| 👥 Group Chat | Up to 2,000 members, encrypted & unencrypted modes |
+| 👥 Group Chat | Up to 2,000 members; new messages use Sender Key encryption and identity signatures with historical key epochs |
 | 💬 Rich Messaging | Text, images, video, files, voice messages, message replies, emoji panel, Telegram sticker packs, read receipts |
 | 🌐 Moments | Post updates (text + images/video), likes, comments, tag-based visibility |
 | 📰 Timeline | Xiaohongshu-style public feed with waterfall layout, anonymous posting |
-| 🔔 Push Notifications | Free-software ntfy channel without Google Play Services |
+| 🔔 Push Notifications | ntfy free-software notifications without Google Play Services |
 | 🌐 Multi-language | Chinese, English, Japanese, Korean, French, German, Russian, Spanish |
 | 🔑 Two-Factor Auth | Google Authenticator-compatible TOTP with 8 recovery codes |
 | 📷 QR Code Scanning | Scan to add friends or join groups |
@@ -42,13 +42,24 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.5.2` syncs the upstream shared frontend with batch downloads for up to 20 chat attachments, temporary versus permanent upload classes, and compatibility for file URLs migrated from legacy R2 storage. The F-Droid build continues to use only the ntfy notification path, without relying on Google Play Services.
+Version `2.6.0` adds signed private and group messaging, mutual identity verification, identity-change warnings, historical group-key epochs, reliable history sync, and authenticated attachment downloads. Trust records remain protected by Android Keystore.
+
+### 2.6.0 Upgrade and Validation
+
+Upgrade the server and all participating clients together to versions compatible with the 2.6.0 signed protocol. Older clients cannot parse signed messages. Legacy unsigned history is labelled; after an identity is pinned, unsigned messages from that contact are rejected. Group rotation retains available historical key epochs but cannot recover keys lost before the upgrade.
+
+```bash
+npm run test:security
+npm run test:attachments
+npm run test:i18n
+npm run build
+```
 
 ---
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
 
-This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. Private chats remain protected by the existing X25519 / ML-KEM-768 key agreement and message-encryption path; group chats continue to use the Sender Key protocol. Identity private keys and group Sender Keys remain protected by Android Keystore.
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.0, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
 
 When enabled, every message is processed in this order:
 
@@ -64,7 +75,7 @@ The app does not persist the extra password. While unlocked it exists only in th
 ## 🏗️ Architecture
 
 ```
-ppp-android/
+ppp-f-droid/
 ├── android/                  # Capacitor Android native project
 ├── src/                      # React + TypeScript frontend source
 │   ├── App.tsx               # Router + auth guard
@@ -90,7 +101,7 @@ ppp-android/
 ├── capacitor.config.ts       # Capacitor configuration
 ├── vite.config.ts            # Vite build configuration
 ├── package.json              # Dependency management
-└── google-services.json      # Firebase config (FCM push)
+└── scripts/                  # F-Droid source checks and unsigned build
 ```
 
 ### Tech Stack
@@ -100,9 +111,9 @@ ppp-android/
 - **State Management**: Zustand 5
 - **Native Bridge**: Capacitor 8 (Android)
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
-- **Post-Quantum Crypto**: crystals-kyber-js (CRYSTALS-Kyber key encapsulation)
+- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.0 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
 - **Video Calls**: LiveKit SFU (direct and group calls)
-- **Push Notifications**: Firebase Cloud Messaging (FCM)
+- **Push Notifications**: ntfy (free software, without Google Play Services)
 - **UI Icons**: Lucide React
 - **Animations**: Lottie Web
 - **QR Code**: qrcode + jsqr
@@ -113,18 +124,19 @@ ppp-android/
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) ≥ 18
+- [Node.js](https://nodejs.org/) ≥ 22
 - [Android Studio](https://developer.android.com/studio) + Android SDK
-- JDK 17+
+- JDK 21 (the Gradle configuration uses Temurin 21)
+- Android SDK Platform 36; `minSdkVersion 24`, `targetSdkVersion 36`
 
 ### Installation & Build
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url> && cd ppp-android
+git clone https://github.com/619dev/ppp-f-droid.git && cd ppp-f-droid
 
 # 2. Install dependencies
-npm install
+npm ci
 
 # 3. Build the frontend
 npm run build
@@ -163,15 +175,9 @@ Core settings are in [capacitor.config.ts](capacitor.config.ts):
 | `webDir` | `dist` | Frontend build output directory |
 | `androidScheme` | `https` | Required for WebRTC and crypto APIs |
 
-### Firebase Push Configuration
+### ntfy Notifications
 
-1. Create a project in [Firebase Console](https://console.firebase.google.com) and add an Android app
-2. Download `google-services.json` and place it in the project root
-3. Configure FCM credentials on the backend server (see [upstream docs](https://github.com/619dev/Paperphone-plus#配置-fcmcapacitor-原生-android-app))
-
----
-
-## 📦 Building for Release
+Use a free-software ntfy client with a compatible server configuration. The app registers its notification topic after sign-in and does not use Firebase or Google Play Services.
 
 ### Build Release APK/AAB
 
@@ -182,13 +188,21 @@ npm run build
 # Sync to Android project
 npx cap sync android
 
-# In Android Studio, build a signed bundle
-# Build → Generate Signed Bundle / APK
+# Validate native code and build a test APK
+cd android
+./gradlew --no-daemon assembleDebug lintRelease
+
+# Build an unsigned release APK; F-Droid builds and signs from source
+./gradlew --no-daemon assembleRelease
 ```
 
-### Signing Configuration
+### F-Droid Build
 
-The project includes a release signing keystore `paperphone-release.keystore` for Google Play signed distribution.
+Version `2.6.0` (`versionCode 26000`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
+
+F-Droid metadata targets `2.6.0` (`26000`), pinned to the source for `v2.6.0`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+
+Download: [GitHub Release v2.6.0](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.0). F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). The profile footer displays `PaperPhonePlus v2.6.0`.
 
 ---
 
@@ -204,21 +218,11 @@ The project includes a release signing keystore `paperphone-release.keystore` fo
 
 ## 🔒 Security Model
 
-```
-On Registration:
-  Device locally generates IK (Identity Key) + SPK (Signed Pre-Key) + 20x OPK (One-time Pre-Keys)
-  Public keys uploaded to server; private keys persist in 4 layers, never leaving the device
-
-On Sending Messages:
-  Sender downloads recipient's IK public key
-  Generates ephemeral ECDH key pair (unique per message)
-  X25519 ECDH → shared secret → XSalsa20-Poly1305 encryption
-  Ephemeral public key attached to message header; recipient destroys it after decryption
-
-What the Server Sees:
-  ✅ Ciphertext blob + routing metadata (sender/recipient UUID)
-  ❌ Plaintext / private keys / ephemeral keys / call content
-```
+- Identity private keys, group Sender Keys and identity trust records use Android Keystore-backed native storage. Chat caches are encrypted per account; decrypted message bodies remain in process memory.
+- Private messages use per-message ephemeral X25519 keys and XSalsa20-Poly1305 encryption. Ed25519 signatures bind sender, recipient, message type and ciphertext; group signatures also bind the group, key epoch and message context.
+- Mutual verification uses challenges and receipts protected by the shared text-appearance password. A signature alone does not establish ownership of an unknown identity. Changed identities require verification again; group sending requires verified member identities.
+- The server sees ciphertext, public identity/signing keys and delivery metadata. Message signing does not end-to-end encrypt uploaded file bytes.
+- See [tests/README.md](tests/README.md) for the protocol, boundaries and manual acceptance checks.
 
 ---
 

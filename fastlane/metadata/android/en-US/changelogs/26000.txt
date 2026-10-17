@@ -1,0 +1,1 @@
+Signed messages, mutual identity verification and identity-change warnings. Historical group keys, reliable offline sync and authenticated attachment downloads. Directory permission fix and optional camera hardware. Retains ntfy without Google Play Services. Requires compatible server and clients.
