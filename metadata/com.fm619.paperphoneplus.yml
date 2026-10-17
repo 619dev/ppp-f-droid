@@ -24,6 +24,7 @@ Builds:
       - apt-get install -y -t forky npm
     init:
       - cd ../..
+      - sh scripts/check-fdroid.sh
       - npm ci --ignore-scripts
     gradle:
       - yes
