@@ -272,7 +272,7 @@ function ImageViewer({ src, onClose }: { src: string; onClose: () => void }) {
       {/* Top bar */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '12px 16px', paddingTop: 'max(12px, env(safe-area-inset-top))',
+        padding: '12px 16px', paddingTop: 'max(12px, var(--safe-top))',
         flexShrink: 0,
       }}>
         <button onClick={onClose} style={{
@@ -331,7 +331,7 @@ function ImageViewer({ src, onClose }: { src: string; onClose: () => void }) {
       {/* Bottom bar */}
       <div style={{
         display: 'flex', justifyContent: 'center', gap: 24,
-        padding: '12px 16px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+        padding: '12px 16px', paddingBottom: 'max(12px, var(--safe-bottom))',
         flexShrink: 0,
       }}>
         <button onClick={handleDownload} style={{

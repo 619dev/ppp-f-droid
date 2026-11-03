@@ -2,4 +2,4 @@ PaperPhonePlus is a free and open-source communication client with end-to-end en
 
 This F-Droid build contains no proprietary push SDK and does not require Google Play Services. Background notification delivery uses the server-provided ntfy topic when available. You can connect to a compatible self-hosted PaperPhonePlus server from the login screen.
 
-Version 2.6.0 adds signed private and group messages, mutual identity verification using a shared password, identity-change warnings and historical group-key epochs. Offline sync and authenticated attachment downloads are improved. Trust records use Android Keystore-backed storage. The server and all participating clients must support the compatible signed protocol.
+Version 2.6.1 retains signed private and group messages, mutual identity verification, identity-change warnings and historical group-key epochs, and adds responsive support for recent Xiaomi/Redmi, OPPO/OnePlus and vivo/iQOO phones. Safe areas now cover cutouts, curved edges, gesture navigation, calls, previews and notifications on HyperOS, ColorOS and OriginOS. Trust records use Android Keystore-backed storage.

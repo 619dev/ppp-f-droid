@@ -27,7 +27,7 @@ export default function NotificationToast() {
       flexDirection: 'column',
       alignItems: 'center',
       gap: 8,
-      padding: '8px 12px',
+      padding: 'calc(8px + var(--safe-top)) max(12px, var(--safe-right)) 8px max(12px, var(--safe-left))',
       pointerEvents: 'none',
     }}>
       {toasts.map((toast) => (

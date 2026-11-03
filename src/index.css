@@ -61,8 +61,9 @@
   --tabbar-h: 52px;
   /*
    * Capacitor 8 injects --safe-area-inset-* from Android WindowInsets.
-   * Chromium's env(safe-area-inset-*) can still be zero on Pixel devices,
-   * so use the larger of the WebView and native values on every edge.
+   * Some Android System WebView builds (including HyperOS, ColorOS and
+   * OriginOS) report env(safe-area-inset-*) as zero. Use the larger of the
+   * WebView and native WindowInsets values on every edge.
    */
   --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
   --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
@@ -126,7 +127,8 @@
 
 html, body, #root {
   height: 100%;
-  height: 100dvh; /* Dynamic viewport height for iOS Safari */
+  height: 100svh; /* Stable fallback for older OEM Android WebViews */
+  height: 100dvh; /* Tracks browser chrome and the software keyboard */
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
                'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
   font-size: 15px;
@@ -1419,7 +1421,11 @@ textarea.input {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Compact Phone Responsive Adaptations (iPhone + Google Pixel)
+   Phone Responsive Adaptations
+   Uses CSS logical viewport sizes instead of model detection, so display
+   scaling and accessibility settings continue to work. In addition to
+   iPhone and Pixel, these ranges cover 2024–2026 Xiaomi/Redmi, OPPO/OnePlus
+   and vivo/iQOO phones: compact flagships, standard models and Pro/Ultra.
    iPhone 12 mini:       375 × 812pt  (safe-top: 47pt, safe-bottom: 34pt)
    iPhone 12/12 Pro:     390 × 844pt  (safe-top: 47pt, safe-bottom: 34pt)
    iPhone 13/13 Pro/14:  390 × 844pt  (safe-top: 47pt, safe-bottom: 34pt)
@@ -1432,7 +1438,7 @@ textarea.input {
    iPhone 16 Pro Max:    440 × 956pt  (safe-top: 59pt Dynamic Island, safe-bottom: 34pt)
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Compact phones (Pixel 2–5, Pixel 6a–9a, iPhone mini) ─── */
+/* ── Compact logical viewports (small phones or enlarged display size) ─ */
 @media screen and (max-width: 375px) {
   :root {
     --header-h: 48px;
@@ -1569,7 +1575,7 @@ textarea.input {
   }
 }
 
-/* ── iPhone 12/13/14 standard (390pt wide) ────────────────── */
+/* ── Narrow/standard Android phones and standard iPhones ───────────── */
 @media screen and (min-width: 376px) and (max-width: 393px) {
   :root {
     --header-h: 52px;
@@ -1589,15 +1595,15 @@ textarea.input {
   }
 }
 
-/* ── Standard phones (Pixel 6–10/Pro, recent iPhones) ─────── */
-@media screen and (min-width: 393px) and (max-width: 430px) {
+/* ── Standard Xiaomi/OPPO/vivo, Pixel and recent iPhones ───────────── */
+@media screen and (min-width: 394px) and (max-width: 427px) {
   :root {
     --header-h: 54px;
     --tabbar-h: 52px;
   }
 }
 
-/* ── Large phones and foldable cover screens ──────────────── */
+/* ── Pro/Ultra phones and foldable cover screens ──────────────────── */
 @media screen and (min-width: 428px) and (max-width: 480px) {
   :root {
     --header-h: 56px;
@@ -1646,11 +1652,11 @@ textarea.input {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   iPhone Height-Based Adaptations
-   Tall screens (812pt+) get more spacing; shorter viewports tighten up
+   Phone Height-Based Adaptations
+   Includes the 19.5:9–21:9 viewports common on recent Android phones.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Short tall phones (iPhone 12 mini: 812pt) */
+/* Short viewports, split-screen, landscape keyboards and compact phones */
 @media screen and (max-height: 720px) {
   .login-card {
     padding: 24px 20px;
@@ -1686,7 +1692,7 @@ textarea.input {
   }
 }
 
-/* Tall phones (926pt+ — Pro Max / Plus models) */
+/* Tall Android flagships and Pro Max / Plus models */
 @media screen and (min-height: 860px) {
   .login-card {
     padding: 40px 28px;
@@ -1715,7 +1721,8 @@ textarea.input {
 
 /* ═══════════════════════════════════════════════════════════════
    Safe Area — Full-Screen Overlays & Fixed Elements
-   Ensures modals, call UI, and overlays respect notch/Dynamic Island
+   Ensures modals, call UI, and overlays respect centered/offset punch holes,
+   curved screen edges, display cutouts, gesture bars and Dynamic Island.
    ═══════════════════════════════════════════════════════════════ */
 
 /* Fixed overlays should respect safe areas */
@@ -1737,7 +1744,7 @@ textarea.input {
 
 /* ═══════════════════════════════════════════════════════════════
    Touch Target Compliance
-   Apple HIG minimum 44×44pt targets on iPhone
+   44×44 CSS-pixel minimum targets across touch phones
    ═══════════════════════════════════════════════════════════════ */
 @media screen and (max-width: 480px) and (pointer: coarse) {
   .icon-btn {
@@ -1763,7 +1770,7 @@ textarea.input {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Landscape Safe Area (iPhone held horizontally)
+   Landscape Safe Area (phones held horizontally)
    ═══════════════════════════════════════════════════════════════ */
 @media screen and (orientation: landscape) and (max-height: 480px) {
   .page-header {

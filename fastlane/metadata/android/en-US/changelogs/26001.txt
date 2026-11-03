@@ -1,0 +1,1 @@
+Adds responsive screen support for recent Xiaomi/Redmi, OPPO/OnePlus and vivo/iQOO phones, including compact, Pro/Ultra and foldable cover displays. Improves safe areas for cutouts, curved edges, gesture navigation, calls, previews and notifications on HyperOS, ColorOS and OriginOS.

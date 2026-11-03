@@ -1,0 +1,1 @@
+新增近三年小米/Redmi、OPPO/一加、vivo/iQOO 手机屏幕适配，覆盖紧凑屏、Pro/Ultra 大屏及折叠屏外屏。改进 HyperOS、ColorOS、OriginOS 下挖孔、曲面边缘、手势导航、通话、预览及通知浮层的安全区处理。

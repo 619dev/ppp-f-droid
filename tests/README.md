@@ -19,7 +19,7 @@ cd android
 
 F-Droid builds are unsigned locally and signed by F-Droid after building from source. No Google Play signing credentials are required. Run the commands above to validate this checkout; physical-device acceptance is separate.
 
-Verified for this F-Droid port: all five regression suites, TypeScript/Vite build, Capacitor sync, `assembleRelease`, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.0 (26000). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
+Verified for this F-Droid port: all five regression suites, TypeScript/Vite build, Capacitor sync, `assembleRelease`, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.1 (26001). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
 
 ## Cryptographic and synchronization coverage
 
@@ -133,6 +133,6 @@ of protocol constants and user-supplied text.
 
 Use two compatible native clients to verify password setup/unlock, both directions of the handshake, profile refresh, focus/visibility refresh and changed-key rejection. Reopen profiles while verification is pending to confirm that challenges survive and retries are throttled. Open the group member list to check refreshed trust, then exercise leave/kick, offline reconnect and pending-key recovery. Check all eight languages, especially interpolated errors, verification prompts and the green badge's meaning.
 
-The application and profile footer version is `2.6.0` (`versionCode 26000`). A source update does not indicate a published release. Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
+The application and profile footer version is `2.6.1` (`versionCode 26001`). A source update does not indicate a published release. Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
 
 See the [main README](../README_EN.md) and [中文说明](../README.md). These client suites use real cryptography with mocked transport and persistence. They provide regression coverage; native-device UI testing remains separate.

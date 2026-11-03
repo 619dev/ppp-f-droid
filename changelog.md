@@ -4,6 +4,20 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.6.1
+
+- Added responsive layout coverage for recent Xiaomi/Redmi, OPPO/OnePlus, and vivo/iQOO compact, standard, Pro/Ultra, and foldable cover-screen viewports.
+- Unified native Android WindowInsets handling across image preview, direct/group calls, notification toasts, and the profile footer to support HyperOS, ColorOS, and OriginOS WebViews.
+- Added stable/dynamic viewport-height fallbacks for software keyboards, split-screen, short viewports, and landscape use.
+- Updated the application, profile footer, Android, Fastlane, and F-Droid metadata to `2.6.1` (`versionCode 26001`).
+
+- 新增近三年小米/Redmi、OPPO/一加、vivo/iQOO 紧凑屏、标准屏、Pro/Ultra 大屏及折叠屏外屏的响应式适配。
+- 图片预览、单人/群组通话、通知浮层及个人信息页统一使用 Android 原生 WindowInsets，兼容 HyperOS、ColorOS 与 OriginOS WebView。
+- 增加稳定/动态视口高度兜底，改善软键盘、分屏、短视口及横屏场景。
+- 应用、个人信息页底部、Android、Fastlane 与 F-Droid 元数据统一更新为 `2.6.1`（`versionCode 26001`）。
+
+---
+
 ## 2.6.0 (F-Droid)
 
 - GitHub release includes a release-signed APK, an unsigned APK and SHA-256 checksums. F-Droid metadata targets 26000 and MR !44373 pins the release source. The profile footer displays 2.6.0.
