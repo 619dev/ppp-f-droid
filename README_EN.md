@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.6.1-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.6.2-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 
@@ -42,9 +42,9 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.6.1` retains signed private/group messaging, mutual identity verification, historical group-key epochs, reliable history sync and authenticated attachment downloads, while adding responsive support for recent Xiaomi/Redmi, OPPO/OnePlus and vivo/iQOO phones. Trust records remain protected by Android Keystore.
+Version `2.6.2` retains signed private/group messaging, mutual identity verification, historical group-key epochs, reliable history sync and authenticated attachment downloads, fixes login/registration scrolling on constrained viewports such as Xiaomi 12 Pro, and enables R8 for Android release builds. Trust records remain protected by Android Keystore.
 
-### 2.6.1 Upgrade and Validation
+### 2.6.2 Upgrade and Validation
 
 Upgrade the server and all participating clients together to versions compatible with the 2.6.0-or-later signed protocol. Older clients cannot parse signed messages. Legacy unsigned history is labelled; after an identity is pinned, unsigned messages from that contact are rejected. Group rotation retains available historical key epochs but cannot recover keys lost before the upgrade.
 
@@ -59,7 +59,7 @@ npm run build
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
 
-This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.1, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.2, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
 
 When enabled, every message is processed in this order:
 
@@ -111,7 +111,7 @@ ppp-f-droid/
 - **State Management**: Zustand 5
 - **Native Bridge**: Capacitor 8 (Android)
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
-- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.1 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
+- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.2 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
 - **Video Calls**: LiveKit SFU (direct and group calls)
 - **Push Notifications**: ntfy (free software, without Google Play Services)
 - **UI Icons**: Lucide React
@@ -198,11 +198,11 @@ cd android
 
 ### F-Droid Build
 
-Version `2.6.1` (`versionCode 26001`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
+Version `2.6.2` (`versionCode 26002`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
 
-F-Droid metadata targets `2.6.1` (`26001`), pinned to the source for `v2.6.1`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+F-Droid metadata targets `2.6.2` (`26002`), pinned to the source for `v2.6.2`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
 
-Download: [GitHub Release v2.6.1](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.1). F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). The profile footer displays `PaperPhonePlus v2.6.1`.
+Download: [GitHub Release v2.6.2](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.2). F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). The profile footer displays `PaperPhonePlus v2.6.2`.
 
 ---
 

@@ -732,10 +732,17 @@ textarea.input {
    ═══════════════════════════════════════════════════════════════ */
 .login-page {
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /*
+   * Start alignment plus auto block margins keeps short forms centred, but
+   * lets tall forms begin at the top of the scrollport. `justify-content:
+   * center` would place overflowing content above the scroll origin, making
+   * the first part unreachable on OEM WebViews such as the Xiaomi 12 Pro's.
+   */
+  justify-content: flex-start;
   padding: 24px;
   background: linear-gradient(160deg,
     #f5f0e8 0%,
@@ -743,7 +750,11 @@ textarea.input {
     #d4c5a9 70%,
     #c7b898 100%);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 /* Ambient light orbs */
@@ -794,6 +805,8 @@ textarea.input {
   border-radius: var(--radius-xl);
   position: relative;
   z-index: 1;
+  flex: 0 0 auto;
+  margin-block: auto;
 }
 
 .login-logo {

@@ -4,6 +4,18 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.6.2
+
+- Fixed login and registration scrolling on Xiaomi 12 Pro and other constrained or enlarged-display phone viewports. Tall forms now remain fully reachable while short forms stay vertically centred.
+- Enabled R8 shrinking, optimization, and obfuscation for Android release builds.
+- Updated the application, profile footer, Android, Fastlane, and F-Droid metadata to `2.6.2` (`versionCode 26002`).
+
+- 修复小米 12 Pro 及其他受限视口、放大显示模式手机上登录与注册页面无法滚动的问题；长表单现在可完整触达，短表单仍保持垂直居中。
+- 为 Android 正式构建启用 R8 代码压缩、优化与混淆。
+- 应用、个人信息页底部、Android、Fastlane 与 F-Droid 元数据统一更新为 `2.6.2`（`versionCode 26002`）。
+
+---
+
 ## 2.6.1
 
 - Added responsive layout coverage for recent Xiaomi/Redmi, OPPO/OnePlus, and vivo/iQOO compact, standard, Pro/Ultra, and foldable cover-screen viewports.

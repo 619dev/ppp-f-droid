@@ -1,0 +1,1 @@
+Fix login and registration scrolling on Xiaomi 12 Pro and other constrained phone viewports. Enable R8 optimization for release builds.
