@@ -13,7 +13,7 @@ import { get, post, put, uploadFileWithProgress, normalizeFileUrl, downloadFileF
 import { sendWs, onWs } from '../api/socket'
 import { getKeys } from '../crypto/keystore'
 import { inspectHybridProtocol } from '../crypto/ratchet'
-import { getPresentationSettings, protectPresentationText, unprotectPresentationText } from '../crypto/presentationCrypto'
+import { protectPresentationText, unprotectPresentationText } from '../crypto/presentationCrypto'
 import { encryptGroupMessage, decryptGroupMessage, fetchGroupKeys, MissingGroupKey } from '../crypto/signedGroups'
 import { Shield } from 'lucide-react'
 import { ChevronLeft, ChevronDown, Lock, Settings, Timer, ImageIcon, Film, Plus, Mic, Download, Paperclip, AlertTriangle, Clock, Package as PackageIcon, FileText, File as FileIcon, Image as LucideImage, Music, Video, Check, CheckCheck, Phone, VideoIcon, SendHorizonal, Smile, WifiOff, X, ZoomIn, ZoomOut } from 'lucide-react'
@@ -784,7 +784,7 @@ export default function Chat() {
     const clientMsgId = crypto.randomUUID()
     setSending(true)
     try {
-      const wireContent = await protectPresentationText(displayWireContent)
+      const wireContent = isGroup ? displayWireContent : await protectPresentationText(displayWireContent)
       if (msgType === 'text') setInput('')
 
       // Prepare pending message metadata for ack handler (real-time display)
@@ -797,7 +797,7 @@ export default function Chat() {
         delivery_status: 'queued',
         from: user.id,
         msg_type: msgType,
-        decrypted: getPresentationSettings().enabled ? wireContent : displayWireContent,
+        decrypted: wireContent,
         ciphertext: '',
       }
       if (isGroup) {

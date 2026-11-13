@@ -4,6 +4,18 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.6.5
+
+- Added friend requests and mutual removal from user profiles. Refresh friends on WebSocket authentication and friendship changes, and refresh pending requests when the relationship changes.
+- Group messages use signed Sender Key encryption with server-published member keys. New group messages no longer use the text-appearance password layer. Earlier group messages still support their original appearance password.
+- Updated Android, package metadata, and the profile footer to `2.6.5` (`versionCode 26005`). Release builds restrict native libraries to `arm64-v8a`.
+
+- 用户资料页支持发送好友申请和双向删除好友。连接认证或好友关系变更时刷新好友列表，关系变更时也刷新待处理申请。
+- 群聊使用服务端公布的成员公钥分发 Sender Key，并校验消息签名。新群消息直接走群加密，旧文本外观密文仍可用原密码读取。
+- Android 原生版本、包元数据和个人信息页底部统一为 `2.6.5`（`versionCode 26005`）。正式构建的原生库仅允许 `arm64-v8a`。
+
+---
+
 ## 2.6.2
 
 - Fixed login and registration scrolling on Xiaomi 12 Pro and other constrained or enlarged-display phone viewports. Tall forms now remain fully reachable while short forms stay vertically centred.

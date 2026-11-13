@@ -1,0 +1,1 @@
+Fixed friendship refresh and added friend controls to user profiles. Groups use signed Sender Key encryption with server-published member keys. Release builds use R8 with an arm64-v8a ABI filter.

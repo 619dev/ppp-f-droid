@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.6.2-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.6.5-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 
@@ -42,11 +42,11 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.6.2` retains signed private/group messaging, mutual identity verification, historical group-key epochs, reliable history sync and authenticated attachment downloads, fixes login/registration scrolling on constrained viewports such as Xiaomi 12 Pro, and enables R8 for Android release builds. Trust records remain protected by Android Keystore.
+Version `2.6.5` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
 
-### 2.6.2 Upgrade and Validation
+### 2.6.5 Upgrade and Validation
 
-Upgrade the server and all participating clients together to versions compatible with the 2.6.0-or-later signed protocol. Older clients cannot parse signed messages. Legacy unsigned history is labelled; after an identity is pinned, unsigned messages from that contact are rejected. Group rotation retains available historical key epochs but cannot recover keys lost before the upgrade.
+Deploy the upstream server with friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. Upgrade participating clients to 2.6.5 for the new group trust model. Older clients may still require private identity verification to read group messages.
 
 ```bash
 npm run test:security
@@ -59,16 +59,16 @@ npm run build
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
 
-This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.2, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.5, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
 
-When enabled, every message is processed in this order:
+When enabled, outgoing private messages use the following steps. New group messages use Sender Key encryption and Ed25519 signatures directly. Earlier group messages with text-appearance encryption can still be read with their original password.
 
-1. The sender first protects the message body with the extra password shared by both participants or by all group members. PBKDF2-SHA-256 (210,000 iterations and a random salt) derives an AES-256-GCM key; every message has an independent random IV and an authentication tag for integrity.
+1. The sender first protects the message body with the extra password shared by both private-chat participants. PBKDF2-SHA-256 (210,000 iterations and a random salt) derives an AES-256-GCM key; every message has an independent random IV and an authentication tag for integrity.
 2. The complete extra-encryption frame (version, salt, IV, and ciphertext) is then encoded with one of eight selectable text appearances. This is not merely decorative character substitution: the visible characters carry the extra encrypted ciphertext.
-3. That appearance ciphertext then enters the project's original encryption path: private-chat E2EE or group Sender Key encryption. The server still receives the original E2EE/Sender-Key ciphertext plus metadata required for delivery.
-4. The recipient reverses the order: first decrypt the original E2EE/Sender-Key layer, then decode the text-appearance frame and decrypt the body with the extra password.
+3. The client encrypts the appearance ciphertext through the private-chat E2EE path and sends the resulting ciphertext with delivery metadata.
+4. The recipient reverses the order: first decrypt the original private-chat E2EE layer, then decode the text-appearance frame and decrypt the body with the extra password.
 
-The extra password is never uploaded, synchronized automatically, or distributed by the server. Both people in a private chat must set the same password; every group member who needs to read the plaintext must also set that same password. Text appearances do not need to match: every message carries its own appearance identifier, so the recipient automatically detects and decodes the sender's choice. For example, one person may send Buddhist text while another sends Hangul; if the extra password matches, both decrypt normally. A user's appearance setting controls only the ciphertext appearance of messages they send. If the password is missing, locked, or different, messages are still sent and received normally and the original E2EE layer still decrypts successfully, but the app can display only the appearance ciphertext—not the original text.
+The extra password is never uploaded, synchronized automatically, or distributed by the server. Both people in a private chat must set the same password. Text appearances do not need to match: every message carries its own appearance identifier, so the recipient automatically detects and decodes the sender's choice. For example, one person may send Buddhist text while another sends Hangul; if the extra password matches, both decrypt normally. A user's appearance setting controls only the ciphertext appearance of messages they send. If the password is missing, locked, or different, messages are still sent and received normally and the original E2EE layer still decrypts successfully, but the app can display only the appearance ciphertext—not the original text.
 
 The app does not persist the extra password. While unlocked it exists only in the current process memory; locally, the app stores only a random salt and AES-GCM verification data used to check whether an entered password is correct. Users can lock immediately or automatically 5, 15, 30, or 60 minutes after the app leaves the foreground. After sign-in and secure account-state restoration, the app prompts for the text-appearance encryption password when the feature is enabled but still locked; users may cancel and continue viewing appearance ciphertext only. This layer adds an independent shared secret beyond E2EE; it does not replace a strong password, device lock, or system secure storage, and it cannot provide absolute protection on a fully compromised device while the password remains in memory.
 
@@ -111,7 +111,7 @@ ppp-f-droid/
 - **State Management**: Zustand 5
 - **Native Bridge**: Capacitor 8 (Android)
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
-- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.2 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
+- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.5 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
 - **Video Calls**: LiveKit SFU (direct and group calls)
 - **Push Notifications**: ntfy (free software, without Google Play Services)
 - **UI Icons**: Lucide React
@@ -198,11 +198,11 @@ cd android
 
 ### F-Droid Build
 
-Version `2.6.2` (`versionCode 26002`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
+Version `2.6.5` (`versionCode 26005`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
 
-F-Droid metadata targets `2.6.2` (`26002`), pinned to the source for `v2.6.2`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+F-Droid metadata targets `2.6.5` (`26005`), pinned to the source for `v2.6.5`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
 
-Download: [GitHub Release v2.6.2](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.2). F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). The profile footer displays `PaperPhonePlus v2.6.2`.
+Download: [GitHub Release v2.6.5](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.5). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). The profile footer displays `PaperPhonePlus v2.6.5`.
 
 ---
 
@@ -220,7 +220,7 @@ Download: [GitHub Release v2.6.2](https://github.com/619dev/ppp-f-droid/releases
 
 - Identity private keys, group Sender Keys and identity trust records use Android Keystore-backed native storage. Chat caches are encrypted per account; decrypted message bodies remain in process memory.
 - Private messages use per-message ephemeral X25519 keys and XSalsa20-Poly1305 encryption. Ed25519 signatures bind sender, recipient, message type and ciphertext; group signatures also bind the group, key epoch and message context.
-- Mutual verification uses challenges and receipts protected by the shared text-appearance password. A signature alone does not establish ownership of an unknown identity. Changed identities require verification again; group sending requires verified member identities.
+- Mutual private-chat verification uses password-protected challenges and receipts. Group signatures are checked against server-published public keys. Membership changes rotate Sender Keys.
 - The server sees ciphertext, public identity/signing keys and delivery metadata. Message signing does not end-to-end encrypt uploaded file bytes.
 - See [tests/README.md](tests/README.md) for the protocol, boundaries and manual acceptance checks.
 
