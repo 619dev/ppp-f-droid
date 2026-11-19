@@ -5,6 +5,7 @@ Run from this repository root after `npm ci`:
 ```bash
 npm run test:security
 npm run test:attachments
+npm run test:media-cache
 npm run test:i18n
 npm run build
 ```
@@ -19,7 +20,7 @@ cd android
 
 F-Droid builds are unsigned locally and signed by F-Droid after building from source. No Google Play signing credentials are required. Run the commands above to validate this checkout; physical-device acceptance is separate.
 
-Verified for this F-Droid port: all five regression suites, TypeScript/Vite build, Capacitor sync, R8-enabled `assembleRelease` with the `arm64-v8a` ABI filter, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.5 (26005). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
+Verified for this F-Droid port: all six regression suites, TypeScript/Vite build, Capacitor sync, R8-enabled `assembleRelease` with the `arm64-v8a` ABI filter, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.6 (26006). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
 
 ## Cryptographic and synchronization coverage
 
@@ -135,6 +136,10 @@ Use two compatible native clients to verify password setup/unlock, both directio
 
 With a server containing upstream fixes `d3e95fe` and `0d65d79`, verify that startup repairs a one-sided accepted friendship. On two Android clients, send and accept an invitation, remove the friendship from a user profile, and check that both contact lists and pending requests refresh. Repeat with one client offline and check the refreshed friend list after reconnecting.
 
-The application and profile footer version is `2.6.5` (`versionCode 26005`). A source update does not indicate a published release. Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
+The application and profile footer version is `2.6.6` (`versionCode 26006`). A source update does not indicate a published release. Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
 
 See the [main README](../README_EN.md) and [中文说明](../README.md). These client suites use real cryptography with mocked transport and persistence. They provide regression coverage; native-device UI testing remains separate.
+
+## 2.6.6 media cache validation
+
+The media cache suite covers persistent original bytes, concurrent download deduplication, reconnect revalidation, offline fallback, account isolation and unavailable storage. Cached images are used across profiles, chats, groups, moments and the timeline. Android Keystore protection remains in place for private keys and encrypted message caches. Validate timeline scroll restoration and upload progress on native devices.

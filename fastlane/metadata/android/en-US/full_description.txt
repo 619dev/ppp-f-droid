@@ -2,4 +2,6 @@ PaperPhonePlus is a free and open-source communication client with end-to-end en
 
 This F-Droid build contains no proprietary push SDK and does not require Google Play Services. Background notification delivery uses the server-provided ntfy topic when available. You can connect to a compatible self-hosted PaperPhonePlus server from the login screen.
 
-Version 2.6.5 refreshes friendships on connection and relationship changes and adds friend request and removal controls to user profiles. Groups use signed Sender Key encryption with server-published member keys. Earlier group messages with text-appearance encryption can still be read with their original password.
+Version 2.6.6 refreshes friendships on connection and relationship changes and adds friend request and removal controls to user profiles. Groups use signed Sender Key encryption with server-published member keys. Earlier group messages with text-appearance encryption can still be read with their original password.
+
+Version 2.6.6 adds persistent media caching, offline image reuse and timeline improvements.

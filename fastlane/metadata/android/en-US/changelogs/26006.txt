@@ -1,0 +1,1 @@
+Persistent media caching and offline image reuse across chats, profiles, groups, moments and timeline. Improved timeline scroll restoration and upload progress. Retains ntfy notifications and Android Keystore storage. Version 2.6.6 (26006).

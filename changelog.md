@@ -4,6 +4,18 @@ All notable changes and new features are recorded here. Historical entries below
 
 所有重要版本改动和新特性统一记录于此。下方历史条目由仓库原有文档迁移而来。
 
+## 2.6.6
+
+- Synced shared frontend `79746d7`: persistent media caching, cached image components, reconnect revalidation and offline reuse.
+- Improved timeline scroll restoration and upload progress. Retained F-Droid ntfy notifications, Android Keystore storage, native safe areas and release R8/arm64-v8a settings.
+- Updated application metadata, profile footer, Android and F-Droid metadata to 2.6.6 (26006).
+
+- 同步公共前端 `79746d7`：新增持久化媒体缓存、缓存图片组件、重连刷新与离线复用。
+- 改进动态滚动位置恢复和上传进度，保留 F-Droid ntfy 通知、Android Keystore、安全区适配及 R8/arm64-v8a 正式构建配置。
+- 应用、个人信息页面底部、Android 与 F-Droid metadata 统一更新为 2.6.6（26006）。
+
+---
+
 ## 2.6.5
 
 - Added friend requests and mutual removal from user profiles. Refresh friends on WebSocket authentication and friendship changes, and refresh pending requests when the relationship changes.

@@ -1,6 +1,5 @@
 Categories:
-  - Internet
-  - Phone & SMS
+  - Messaging
 License: AGPL-3.0-only
 AuthorName: 大贤者一秀
 AuthorEmail: 4722522@gmail.com
@@ -14,9 +13,32 @@ RepoType: git
 Repo: https://github.com/619dev/ppp-f-droid.git
 
 Builds:
+  - versionName: 2.6.2
+    versionCode: 26002
+    commit: 83f2d82770d83ec69d7aa424c1c17d0326f7cc75
+    subdir: android/app
+    sudo:
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky npm
+    init:
+      - cd ../..
+      - sh scripts/check-fdroid.sh
+      - npm ci --ignore-scripts
+    gradle:
+      - yes
+    prebuild:
+      - cd ../..
+      - sh scripts/check-fdroid.sh
+      - npm run build
+      - npx --no-install cap sync android
+      - sh scripts/check-fdroid.sh
+    scandelete:
+      - node_modules
+
   - versionName: 2.6.5
     versionCode: 26005
-    commit: v2.6.5
+    commit: f36ff8be0f2e9476f25d08e8cd9eddb284f37d25
     subdir: android/app
     sudo:
       - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
@@ -37,32 +59,9 @@ Builds:
     scandelete:
       - node_modules
 
-  - versionName: 2.6.1
-    versionCode: 26001
-    commit: v2.6.1
-    subdir: android/app
-    sudo:
-      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
-      - apt-get update
-      - apt-get install -y -t forky npm
-    init:
-      - cd ../..
-      - sh scripts/check-fdroid.sh
-      - npm ci --ignore-scripts
-    gradle:
-      - yes
-    prebuild:
-      - cd ../..
-      - sh scripts/check-fdroid.sh
-      - npm run build
-      - npx --no-install cap sync android
-      - sh scripts/check-fdroid.sh
-    scandelete:
-      - node_modules
-
-  - versionName: 2.6.0
-    versionCode: 26000
-    commit: 19c4f36195be4dc1dec5e428d2ff2518002bfb83
+  - versionName: 2.6.6
+    versionCode: 26006
+    commit: v2.6.6
     subdir: android/app
     sudo:
       - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
@@ -85,5 +84,5 @@ Builds:
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 2.6.5
-CurrentVersionCode: 26005
+CurrentVersion: 2.6.6
+CurrentVersionCode: 26006

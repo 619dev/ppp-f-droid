@@ -1,7 +1,7 @@
 {
   "name": "paperphone-client",
   "private": true,
-  "version": "2.6.5",
+  "version": "2.6.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "test:i18n": "node tests/securityI18n.test.cjs",
     "test:security": "node tests/authenticatedMessaging.test.cjs && node tests/signedGroups.test.cjs && node tests/sync.test.cjs",
     "test:attachments": "node tests/attachments.test.cjs",
-    "check:fdroid": "sh scripts/check-fdroid.sh"
+    "check:fdroid": "sh scripts/check-fdroid.sh",
+    "test:media-cache": "node tests/mediaCache.test.cjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",

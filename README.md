@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/版本-2.6.5-orange)](package.json)
+[![Version](https://img.shields.io/badge/版本-2.6.6-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 
@@ -42,11 +42,13 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
-2.6.5 在连接和收到好友关系变更时刷新好友列表，在用户资料页提供添加和删除好友入口，并使用群成员公钥分发带签名的 Sender Key。
+2.6.6 在连接和收到好友关系变更时刷新好友列表，在用户资料页提供添加和删除好友入口，并使用群成员公钥分发带签名的 Sender Key。
 
-### 2.6.5 升级与验证
+2.6.6 同步公共前端 `79746d7`，新增持久化媒体缓存和离线图片复用，改进动态滚动位置恢复与上传进度。缓存保存媒体原始字节；私钥与消息缓存继续使用 Android Keystore 保护。
 
-请部署包含好友修复 `d3e95fe` 和 `0d65d79` 的上游服务端。服务启动时补全已有的双向好友记录，并提供更新后的好友接口和 `friendship_changed` 通知。参与群聊的客户端也应更新到 2.6.5，旧客户端仍可能要求先验证私聊身份才能读取群消息。
+### 2.6.6 升级与验证
+
+请部署包含好友修复 `d3e95fe` 和 `0d65d79` 的上游服务端。服务启动时补全已有的双向好友记录，并提供更新后的好友接口和 `friendship_changed` 通知。参与群聊的客户端也应更新到 2.6.6，旧客户端仍可能要求先验证私聊身份才能读取群消息。
 
 ```bash
 npm run test:security
@@ -59,7 +61,7 @@ npm run build
 
 ## 🔐 额外加密文本外观：工作原理与安全边界
 
-这项功能是**建立在原有端到端加密（E2EE）之上的额外保险**，不是用文本外观代替 E2EE，也不会绕过或降低原有加密。2.6.5 私聊签名消息使用 X25519 密钥协商、XSalsa20-Poly1305 加密及 Ed25519 签名；群聊使用 Sender Key 加密及 Ed25519 签名。身份私钥和群聊 Sender Key 继续由 Android Keystore 保护。
+这项功能是**建立在原有端到端加密（E2EE）之上的额外保险**，不是用文本外观代替 E2EE，也不会绕过或降低原有加密。2.6.6 私聊签名消息使用 X25519 密钥协商、XSalsa20-Poly1305 加密及 Ed25519 签名；群聊使用 Sender Key 加密及 Ed25519 签名。身份私钥和群聊 Sender Key 继续由 Android Keystore 保护。
 
 启用后，发送的私聊消息按以下顺序处理。新群消息直接使用 Sender Key 加密和 Ed25519 签名。旧群消息如使用了文本外观加密，仍可用原密码读取。
 
@@ -111,7 +113,7 @@ ppp-f-droid/
 - **状态管理**：Zustand 5
 - **原生桥接**：Capacitor 8（Android）
 - **加密库**：libsodium-wrappers-sumo（WebAssembly，Curve25519 / XSalsa20-Poly1305）
-- **兼容加密依赖**：保留 crystals-kyber-js；2.6.5 签名消息路径使用 X25519，当前注册接口的 `kem_pub` 实际承载 Ed25519 签名公钥，不代表已启用抗量子密钥注册。
+- **兼容加密依赖**：保留 crystals-kyber-js；2.6.6 签名消息路径使用 X25519，当前注册接口的 `kem_pub` 实际承载 Ed25519 签名公钥，不代表已启用抗量子密钥注册。
 - **视频通话**：LiveKit SFU（私聊与群组会议）
 - **推送通知**：ntfy（自由软件，不依赖 Google Play 服务）
 - **UI 图标**：Lucide React
@@ -198,11 +200,11 @@ cd android
 
 ### F-Droid 构建
 
-版本为 `2.6.5`（`versionCode 26005`）。仅保留 ntfy 通知，不包含 FCM、Google 服务插件、OneSignal 或发布签名密钥。正式构建启用 R8，原生库仅允许 `arm64-v8a`。运行 `npm run check:fdroid` 检查源码，运行 `sh scripts/build-fdroid.sh` 构建未签名 APK。
+版本为 `2.6.6`（`versionCode 26006`）。仅保留 ntfy 通知，不包含 FCM、Google 服务插件、OneSignal 或发布签名密钥。正式构建启用 R8，原生库仅允许 `arm64-v8a`。运行 `npm run check:fdroid` 检查源码，运行 `sh scripts/build-fdroid.sh` 构建未签名 APK。
 
-F-Droid metadata 当前版本为 `2.6.5`（`26005`），构建固定到 `v2.6.5` 对应源码。GitHub 发布页提供本机发布密钥签名的 APK 和未签名构建；F-Droid 从源码独立构建并使用自己的签名，两种渠道不能直接覆盖安装。
+F-Droid metadata 当前版本为 `2.6.6`（`26006`），构建固定到 `v2.6.6` 对应源码。GitHub 发布页提供本机发布密钥签名的 APK 和未签名构建；F-Droid 从源码独立构建并使用自己的签名，两种渠道不能直接覆盖安装。
 
-下载：[GitHub Release v2.6.5](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.5)。F-Droid 原收录记录见 [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373)。个人信息页面底部显示 `PaperPhonePlus v2.6.5`。
+下载：[GitHub Release v2.6.6](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.6)。F-Droid 原收录记录见 [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373)。本次更新：[GitLab MR !58027](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/58027)、[RFP #4828](https://gitlab.com/fdroid/rfp/-/work_items/4828)。个人信息页面底部显示 `PaperPhonePlus v2.6.6`。
 
 ---
 
