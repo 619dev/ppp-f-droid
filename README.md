@@ -42,19 +42,20 @@ PaperPhonePlus 是一款微信风格的端对端加密即时通讯应用。本�
 
 完整版本更新记录已迁移至 [changelog.md](changelog.md)。
 
-2.6.7 在连接和收到好友关系变更时刷新好友列表，在用户资料页提供添加和删除好友入口，并使用群成员公钥分发带签名的 Sender Key。
+2.6.7 同步公共前端 `43cca72`。个人信息 → 账号删除中可设置连续 3、6、12、24 或 36 个月未登录后自动删除账号，默认 12 个月，也可输入密码立即删除。已启用双因素验证的用户可在登录页用验证器验证码重设密码，成功后撤销原有设备会话。两项功能均需部署 2.6.7 或更新的服务端。
 
 2.6.6 同步公共前端 `79746d7`，新增持久化媒体缓存和离线图片复用，改进动态滚动位置恢复与上传进度。缓存保存媒体原始字节；私钥与消息缓存继续使用 Android Keystore 保护。
 
-2.6.7 同步公共前端 `43cca72`。个人信息 → 账号删除中可设置连续 3、6、12、24 或 36 个月未登录后自动删除账号，默认 12 个月，也可输入密码立即删除。已启用双因素验证的用户可在登录页用验证器验证码重设密码，成功后撤销原有设备会话。两项功能均需部署 2.6.7 或更新的服务端。
+2.6.5 在连接和收到好友关系变更时刷新好友列表，在用户资料页提供添加和删除好友入口，并使用群成员公钥分发带签名的 Sender Key。
 
 ### 2.6.7 升级与验证
 
-请部署 2.6.7 或更新的上游服务端，其中包含好友修复 `d3e95fe` 和 `0d65d79` 。服务启动时补全已有的双向好友记录，并提供更新后的好友接口和 `friendship_changed` 通知。参与群聊的客户端也应更新到 2.6.7，旧客户端仍可能要求先验证私聊身份才能读取群消息。
+请部署 2.6.7 或更新的上游服务端，其中包含好友修复 `d3e95fe` 和 `0d65d79`。服务启动时补全已有的双向好友记录，并提供更新后的好友接口和 `friendship_changed` 通知。群聊的新版密钥分发机制从本客户端 2.6.5 开始支持。使用更早版本的成员应升级客户端。
 
 ```bash
 npm run test:security
 npm run test:attachments
+npm run test:media-cache
 npm run test:i18n
 npm run build
 ```
@@ -130,7 +131,7 @@ ppp-f-droid/
 
 - [Node.js](https://nodejs.org/) ≥ 22
 - [Android Studio](https://developer.android.com/studio) + Android SDK
-- JDK 21（项目 Gradle 配置使用 Temurin 21）
+- JDK 21（通过构建环境的 `JAVA_HOME` 或 Android Studio 的 Gradle JDK 设置指定）
 - Android SDK Platform 36；当前 `minSdkVersion 24`、`targetSdkVersion 36`
 
 ### 安装与构建
@@ -154,15 +155,20 @@ npx cap open android
 
 ### 开发模式
 
-```bash
-# 启动前端开发服务器
-npm run dev
+在浏览器中开发前端。
 
-# 在另一个终端运行 Android 实时重载
-npx cap run android --livereload --external
+```bash
+npm run dev
 ```
 
-> **注意**：开发模式下需要配置后端服务器地址。可在登录页面手动输入后端地址，例如 `https://your-server.com`。
+在 Android 设备或模拟器上运行当前前端构建。
+
+```bash
+npm run build
+npx cap run android
+```
+
+> **注意**：浏览器开发服务器默认将 `/api` 和 `/ws` 转发到本机 3000 端口。使用其他后端时，可在登录页填写兼容服务端的 HTTPS 地址。
 
 ---
 
@@ -177,11 +183,11 @@ npx cap run android --livereload --external
 | `appId` | `com.fm619.paperphoneplus` | Android 应用包名 |
 | `appName` | `PaperPhonePlus` | 应用显示名称 |
 | `webDir` | `dist` | 前端构建输出目录 |
-| `androidScheme` | `https` | WebRTC 和 crypto API 需要 HTTPS |
+| `server.androidScheme` | `https` | WebRTC 和 crypto API 需要 HTTPS |
 
 ### ntfy 通知配置
 
-F-Droid 版通过 ntfy 接收通知；请使用自由软件 ntfy 客户端及兼容服务端配置。应用登录后注册通知主题，不使用 Firebase 或 Google Play 服务。
+F-Droid 版通过 ntfy 接收通知；请使用自由软件 ntfy 客户端及兼容服务端配置。登录后应用会尝试注册服务器提供的通知主题。请在「个人信息」中查看主题，并在 ntfy 客户端订阅。
 
 ### 构建 Release APK/AAB
 
@@ -198,15 +204,18 @@ cd android
 
 # 构建未签名发布包，由 F-Droid 从源码构建并签名
 ./gradlew --no-daemon assembleRelease
+
+# 如需未签名的 Android App Bundle
+./gradlew --no-daemon bundleRelease
 ```
 
 ### F-Droid 构建
 
 版本为 `2.6.7`（`versionCode 26007`）。仅保留 ntfy 通知，不包含 FCM、Google 服务插件、OneSignal 或发布签名密钥。正式构建启用 R8，原生库仅允许 `arm64-v8a`。运行 `npm run check:fdroid` 检查源码，运行 `sh scripts/build-fdroid.sh` 构建未签名 APK。
 
-F-Droid metadata 当前版本为 `2.6.7`（`26007`），构建固定到 `v2.6.7` 对应源码。GitHub 发布页提供本机发布密钥签名的 APK 和未签名构建；F-Droid 从源码独立构建并使用自己的签名，两种渠道不能直接覆盖安装。
+本仓库的 F-Droid 构建元数据指定 `2.6.7`（`26007`），构建固定到 `v2.6.7` 对应源码。GitHub 发布页提供本机发布密钥签名的 APK 和未签名构建；F-Droid 从源码独立构建并使用自己的签名，两种渠道不能直接覆盖安装。
 
-下载：[GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7)。F-Droid 原收录记录见 [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373)。 后续版本由 F-Droid 根据 GitHub 标签自动检测。
+下载：[GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7)。F-Droid 原收录记录见 [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373)。自动更新检查以 Git 标签为依据。
 
 ---
 

@@ -42,19 +42,20 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.6.7` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
+Version 2.6.7 syncs shared frontend `43cca72`. Profile → Account deletion offers automatic deletion after 3, 6, 12, 24, or 36 months without signing in (default 12 months) and password-confirmed immediate deletion. Accounts with two-factor authentication can reset their password from sign-in with an authenticator code, revoking existing sessions. Both features require server version 2.6.7 or later.
 
 Version 2.6.6 syncs shared frontend `79746d7`, adding persistent media caching and offline image reuse, and improving timeline scroll restoration and upload progress. Media caches store original bytes; private keys and message caches retain Android Keystore protection.
 
-Version 2.6.7 syncs shared frontend `43cca72`. Profile → Account deletion offers automatic deletion after 3, 6, 12, 24, or 36 months without signing in (default 12 months) and password-confirmed immediate deletion. Accounts with two-factor authentication can reset their password from sign-in with an authenticator code, revoking existing sessions. Both features require server version 2.6.7 or later.
+Version `2.6.5` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
 
 ### 2.6.7 Upgrade and Validation
 
-Deploy upstream server version 2.6.7 or later, which includes friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. Upgrade participating clients to 2.6.7 for the new group trust model. Older clients may still require private identity verification to read group messages.
+Deploy upstream server version 2.6.7 or later, which includes friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. The updated group key distribution is supported from Android client version 2.6.5. Group members using earlier clients should upgrade.
 
 ```bash
 npm run test:security
 npm run test:attachments
+npm run test:media-cache
 npm run test:i18n
 npm run build
 ```
@@ -130,7 +131,7 @@ ppp-f-droid/
 
 - [Node.js](https://nodejs.org/) ≥ 22
 - [Android Studio](https://developer.android.com/studio) + Android SDK
-- JDK 21 (the Gradle configuration uses Temurin 21)
+- JDK 21 (set `JAVA_HOME` in the build environment or select the Gradle JDK in Android Studio)
 - Android SDK Platform 36; `minSdkVersion 24`, `targetSdkVersion 36`
 
 ### Installation & Build
@@ -154,15 +155,20 @@ npx cap open android
 
 ### Development Mode
 
-```bash
-# Start the frontend dev server
-npm run dev
+Develop the frontend in a browser.
 
-# In another terminal, run Android with live reload
-npx cap run android --livereload --external
+```bash
+npm run dev
 ```
 
-> **Note**: In development mode, you need to configure the backend server address. You can manually enter the backend URL on the login page, e.g., `https://your-server.com`.
+Run the current frontend build on an Android device or emulator.
+
+```bash
+npm run build
+npx cap run android
+```
+
+> **Note**: The browser development server proxies `/api` and `/ws` to local port 3000 by default. To use another backend, enter its HTTPS URL on the sign-in screen.
 
 ---
 
@@ -177,11 +183,11 @@ Core settings are in [capacitor.config.ts](capacitor.config.ts):
 | `appId` | `com.fm619.paperphoneplus` | Android application package name |
 | `appName` | `PaperPhonePlus` | App display name |
 | `webDir` | `dist` | Frontend build output directory |
-| `androidScheme` | `https` | Required for WebRTC and crypto APIs |
+| `server.androidScheme` | `https` | Required for WebRTC and crypto APIs |
 
 ### ntfy Notifications
 
-Use a free-software ntfy client with a compatible server configuration. The app registers its notification topic after sign-in and does not use Firebase or Google Play Services.
+Use a free-software ntfy client with a compatible server configuration. After sign-in, the app attempts to register the topic provided by the server. Find the topic in Profile and subscribe to it in the ntfy client.
 
 ### Build Release APK/AAB
 
@@ -198,15 +204,18 @@ cd android
 
 # Build an unsigned release APK; F-Droid builds and signs from source
 ./gradlew --no-daemon assembleRelease
+
+# Build an unsigned Android App Bundle if needed
+./gradlew --no-daemon bundleRelease
 ```
 
 ### F-Droid Build
 
 Version `2.6.7` (`versionCode 26007`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
 
-F-Droid metadata targets `2.6.7` (`26007`), pinned to the source for `v2.6.7`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+The F-Droid build metadata in this repository targets `2.6.7` (`26007`), pinned to the source for `v2.6.7`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
 
-Download: [GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). F-Droid detects subsequent versions automatically from GitHub tags.
+Download: [GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). Automatic update checks use Git tags.
 
 ---
 
