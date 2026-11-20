@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.6.6-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.6.7-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 
@@ -42,13 +42,15 @@ PaperPhonePlus is a WeChat-style end-to-end encrypted instant messaging applicat
 
 The complete release history has moved to [changelog.md](changelog.md).
 
-Version `2.6.6` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
+Version `2.6.7` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
 
 Version 2.6.6 syncs shared frontend `79746d7`, adding persistent media caching and offline image reuse, and improving timeline scroll restoration and upload progress. Media caches store original bytes; private keys and message caches retain Android Keystore protection.
 
-### 2.6.6 Upgrade and Validation
+Version 2.6.7 syncs shared frontend `43cca72`. Profile → Account deletion offers automatic deletion after 3, 6, 12, 24, or 36 months without signing in (default 12 months) and password-confirmed immediate deletion. Accounts with two-factor authentication can reset their password from sign-in with an authenticator code, revoking existing sessions. Both features require server version 2.6.7 or later.
 
-Deploy the upstream server with friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. Upgrade participating clients to 2.6.6 for the new group trust model. Older clients may still require private identity verification to read group messages.
+### 2.6.7 Upgrade and Validation
+
+Deploy upstream server version 2.6.7 or later, which includes friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. Upgrade participating clients to 2.6.7 for the new group trust model. Older clients may still require private identity verification to read group messages.
 
 ```bash
 npm run test:security
@@ -61,7 +63,7 @@ npm run build
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
 
-This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.6, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.7, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
 
 When enabled, outgoing private messages use the following steps. New group messages use Sender Key encryption and Ed25519 signatures directly. Earlier group messages with text-appearance encryption can still be read with their original password.
 
@@ -113,7 +115,7 @@ ppp-f-droid/
 - **State Management**: Zustand 5
 - **Native Bridge**: Capacitor 8 (Android)
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
-- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.6 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
+- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.7 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
 - **Video Calls**: LiveKit SFU (direct and group calls)
 - **Push Notifications**: ntfy (free software, without Google Play Services)
 - **UI Icons**: Lucide React
@@ -200,11 +202,11 @@ cd android
 
 ### F-Droid Build
 
-Version `2.6.6` (`versionCode 26006`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
+Version `2.6.7` (`versionCode 26007`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
 
-F-Droid metadata targets `2.6.6` (`26006`), pinned to the source for `v2.6.6`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+F-Droid metadata targets `2.6.7` (`26007`), pinned to the source for `v2.6.7`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
 
-Download: [GitHub Release v2.6.6](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.6). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). This update: [GitLab MR !58027](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/58027), [RFP #4828](https://gitlab.com/fdroid/rfp/-/work_items/4828). The profile footer displays `PaperPhonePlus v2.6.6`.
+Download: [GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). F-Droid detects subsequent versions automatically from GitHub tags.
 
 ---
 

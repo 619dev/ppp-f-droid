@@ -5,3 +5,5 @@ This F-Droid build contains no proprietary push SDK and does not require Google 
 Version 2.6.6 refreshes friendships on connection and relationship changes and adds friend request and removal controls to user profiles. Groups use signed Sender Key encryption with server-published member keys. Earlier group messages with text-appearance encryption can still be read with their original password.
 
 Version 2.6.6 adds persistent media caching, offline image reuse and timeline improvements.
+
+Configure automatic account deletion after inactivity or delete your account immediately. Accounts with two-factor authentication can reset their password with an authenticator code. The new features require server version 2.6.7 or later.

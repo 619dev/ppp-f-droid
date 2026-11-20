@@ -1,0 +1,1 @@
+Configure automatic account deletion after inactivity or delete your account immediately. Accounts with two-factor authentication can reset their password with an authenticator code. The new features require server version 2.6.7 or later.
