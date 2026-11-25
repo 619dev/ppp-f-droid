@@ -1,0 +1,1 @@
+Standardized Lucide icons for identity verification, group message status, calls, QR scanning, settings and the emoji picker. Emoji insertion, recent emoji and stickers remain available.

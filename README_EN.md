@@ -8,7 +8,7 @@
 [![React](https://img.shields.io/badge/React-19-blue)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](#)
 [![Capacitor](https://img.shields.io/badge/Capacitor-8-green)](#)
-[![Version](https://img.shields.io/badge/Version-2.6.7-orange)](package.json)
+[![Version](https://img.shields.io/badge/Version-2.6.8-orange)](package.json)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 
 
@@ -48,6 +48,8 @@ Version 2.6.6 syncs shared frontend `79746d7`, adding persistent media caching a
 
 Version `2.6.5` refreshes friends after connecting or receiving a friendship change, adds friend controls to user profiles, and uses published group member keys for signed Sender Key distribution.
 
+Version 2.6.8 syncs shared frontend `9cc5486`. Standardized Lucide icons for identity verification, group message status, calls, QR scanning, settings and the emoji picker. Emoji insertion, recent emoji and stickers remain available.
+
 ### 2.6.7 Upgrade and Validation
 
 Deploy upstream server version 2.6.7 or later, which includes friendship fixes `d3e95fe` and `0d65d79`. On startup, it repairs reciprocal friendship records and supports the updated friend APIs and `friendship_changed` notifications. The updated group key distribution is supported from Android client version 2.6.5. Group members using earlier clients should upgrade.
@@ -64,7 +66,7 @@ npm run build
 
 ## 🔐 Extra-encrypted text appearance: design and security boundary
 
-This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. In 2.6.7, signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
+This feature is **extra insurance on top of the existing end-to-end encryption (E2EE)**. It does not replace E2EE with a visual encoding, and it never bypasses or weakens the original encryption. Signed private messages use X25519 key agreement, XSalsa20-Poly1305 encryption and Ed25519 signatures; groups use Sender Key encryption and Ed25519 signatures. Identity private keys and group Sender Keys remain protected by Android Keystore.
 
 When enabled, outgoing private messages use the following steps. New group messages use Sender Key encryption and Ed25519 signatures directly. Earlier group messages with text-appearance encryption can still be read with their original password.
 
@@ -116,7 +118,7 @@ ppp-f-droid/
 - **State Management**: Zustand 5
 - **Native Bridge**: Capacitor 8 (Android)
 - **Crypto Library**: libsodium-wrappers-sumo (WebAssembly, Curve25519 / XSalsa20-Poly1305)
-- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the 2.6.7 signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
+- **Compatibility Crypto Dependency**: crystals-kyber-js remains available; the signed path uses X25519. The current registration field `kem_pub` carries an Ed25519 signing public key, not a working post-quantum registration key.
 - **Video Calls**: LiveKit SFU (direct and group calls)
 - **Push Notifications**: ntfy (free software, without Google Play Services)
 - **UI Icons**: Lucide React
@@ -211,11 +213,11 @@ cd android
 
 ### F-Droid Build
 
-Version `2.6.7` (`versionCode 26007`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
+Version `2.6.8` (`versionCode 26008`) retains only ntfy notifications, without FCM, Google Services plugins, OneSignal or release signing secrets. Release builds use R8 and restrict native libraries to `arm64-v8a`. Run `npm run check:fdroid` for source checks and `sh scripts/build-fdroid.sh` for an unsigned release APK.
 
-The F-Droid build metadata in this repository targets `2.6.7` (`26007`), pinned to the source for `v2.6.7`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
+The F-Droid build metadata in this repository targets `2.6.8` (`26008`), pinned to the source for `v2.6.8`. GitHub Releases provide a locally release-signed APK and an unsigned build. F-Droid builds from source and signs independently; APKs from these channels cannot update each other directly.
 
-Download: [GitHub Release v2.6.7](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.7). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). Automatic update checks use Git tags.
+Download: [GitHub Release v2.6.8](https://github.com/619dev/ppp-f-droid/releases/tag/v2.6.8). Original F-Droid inclusion: [GitLab MR !44373](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/44373). Automatic update checks use Git tags.
 
 ---
 

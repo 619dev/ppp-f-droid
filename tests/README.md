@@ -20,7 +20,7 @@ cd android
 
 F-Droid builds are unsigned locally and signed by F-Droid after building from source. No Google Play signing credentials are required. Run the commands above to validate this checkout; physical-device acceptance is separate.
 
-Verified for this F-Droid port: all six regression suites, TypeScript/Vite build, Capacitor sync, R8-enabled `assembleRelease` with the `arm64-v8a` ABI filter, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.7 (26007). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
+Verified for this F-Droid port: all six regression suites, TypeScript/Vite build, Capacitor sync, R8-enabled `assembleRelease` with the `arm64-v8a` ABI filter, `lintRelease`, and F-Droid source checks passed. The release runtime dependency report contains no Google Play Services, Firebase, OneSignal or Capacitor push-notification SDK. Gradle generates an unsigned APK, version 2.6.8 (26008). The GitHub release also provides a copy signed outside the source tree with the local release key; F-Droid signs its own builds independently.
 
 ## Cryptographic and synchronization coverage
 
@@ -136,7 +136,7 @@ Use two compatible native clients to verify password setup/unlock, both directio
 
 With a server containing upstream fixes `d3e95fe` and `0d65d79`, verify that startup repairs a one-sided accepted friendship. On two Android clients, send and accept an invitation, remove the friendship from a user profile, and check that both contact lists and pending requests refresh. Repeat with one client offline and check the refreshed friend list after reconnecting.
 
-The application and profile footer version is `2.6.7` (`versionCode 26007`). A source update does not indicate a published release. Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
+The application and profile footer version is `2.6.8` (`versionCode 26008`). Tests of this shared source do not validate published native clients or Docker images. Local caches retain at most 2,000 messages per conversation; server-side auto-delete and attachment retention remain applicable. Message signing does not end-to-end encrypt uploaded file bytes, and no upgrade can recreate previously lost keys.
 
 See the [main README](../README_EN.md) and [中文说明](../README.md). These client suites use real cryptography with mocked transport and persistence. They provide regression coverage; native-device UI testing remains separate.
 
@@ -153,3 +153,9 @@ Set a test account’s last-login timestamp beyond its selected period, restart 
 ## 2.6.7 password recovery acceptance
 
 Check that an account with enabled two-factor authentication can reset its password from sign-in with a valid authenticator code and then sign in with its new password. Test unknown accounts, disabled enrollment, incorrect or expired codes, repeated codes, and the attempt limit. Verify that old passwords, pre-reset pending sign-in tokens, and existing device sessions are rejected after a successful reset. The recovery flow returns users to sign-in and preserves their existing authenticator setup. Verify the prompt, validation, failure and success text in all eight languages with the localization suite.
+
+## 2.6.8 shared frontend acceptance
+
+- Open Profile and confirm the footer reads `PaperPhonePlus v2.6.8`. Complete mutual verification and confirm the green Lucide check appears on the contact profile. Open a signed group message and confirm its signature indicator.
+- Open the chat emoji panel. Confirm the toolbar and category tabs use Lucide icons. Select and send an emoji, confirm it appears in Recent, then open the sticker tab and send a sticker.
+- Check that the call speed control, QR scanner, language picker, and proxy controls display Lucide icons.
